@@ -18,11 +18,11 @@ module.exports.loop = function () {
     //var builders = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'builder');
     console.log("H:" + harvesters.length + " U:" + upgraders.length);
 
-    if(harvesters.length < 2) {
+    if(harvesters.length < 1) {
         spawn_harvester();
     }
     else {
-        if (upgraders.length < 8) {
+        if (upgraders.length < 4) {
             spawn_upgrader();
         }
         // if (builders.length < 1) {
@@ -40,8 +40,12 @@ module.exports.loop = function () {
             creep.suicide();
         }
         
-        // var res = creep.memory.role.slice(0, 1);
-        // var res1 = creep.memory.temp_role.slice(0, 1);
+        var res = creep.memory.role.slice(0, 1);
+        var res1 = creep.memory.temp_role.slice(0, 1);
+        // if (creep.memory.tid.id) {
+        //     //console.log(creep.memory.tid.id.slice(creep.memory.tid.id.length-1,creep.memory.tid.id.length));
+        //     creep.say(res + ' ' + creep.memory.tid.slice(creep.memory.tid.length-1,creep.memory.tid.length));
+        // }
         // creep.say(res + res1 + " " + creep.carry.energy);
         
         if(creep.memory.role == 'harvester') {
