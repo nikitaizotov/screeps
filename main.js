@@ -7,6 +7,15 @@ module.exports.loop = function () {
     
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
+            
+            for(var n in roleUpgrader.sources) {
+                for (var z in roleUpgrader.sources[n]) {
+                    if (roleUpgrader.sources[n][z] == name) {
+                        delete roleUpgrader.sources[n][z];
+                    }
+                }
+            }
+            
             delete Memory.creeps[name];
             console.log('Clearing non-existing creep memory:', name);
         }
@@ -22,7 +31,7 @@ module.exports.loop = function () {
         spawn_harvester();
     }
     else {
-        if (upgraders.length < 4) {
+        if (upgraders.length < 6) {
             spawn_upgrader();
         }
         // if (builders.length < 1) {
@@ -42,10 +51,10 @@ module.exports.loop = function () {
         
         var res = creep.memory.role.slice(0, 1);
         var res1 = creep.memory.temp_role.slice(0, 1);
-        // if (creep.memory.tid.id) {
-        //     //console.log(creep.memory.tid.id.slice(creep.memory.tid.id.length-1,creep.memory.tid.id.length));
-        //     creep.say(res + ' ' + creep.memory.tid.slice(creep.memory.tid.length-1,creep.memory.tid.length));
-        // }
+        //if (creep.memory.tid.id) {
+            //console.log(creep.memory.tid.id.slice(creep.memory.tid.id.length-1,creep.memory.tid.id.length));
+            creep.say(res + ' ' + creep.memory.tid.slice(creep.memory.tid.length-1,creep.memory.tid.length));
+        //}
         // creep.say(res + res1 + " " + creep.carry.energy);
         
         if(creep.memory.role == 'harvester') {

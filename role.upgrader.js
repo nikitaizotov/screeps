@@ -8,6 +8,9 @@ var roleUpgrader = {
         if (creep.memory.tid == '') {
            // If creep needs to find a source.
            for (var n in sources_found) {
+               if (sources_found[n].length > 1) {
+                   continue;
+               }
                var sid = sources_found[n].id;
                // Run over the sources and find where we can place our creep.
                if (!this.sources[sid]) {
@@ -67,8 +70,8 @@ var roleUpgrader = {
     	        if ( creep.memory.charging == false) {
     	            if (creep.memory.tid != '') {
     	                for (var n in this.sources[creep.memory.tid]) {
-    	                    if (this.sources[tid][n] == creep.name) {
-    	                        this.sources[tid][n].splice(n, 1);
+    	                    if (this.sources[creep.memory.tid][n] == creep.name) {
+    	                        this.sources[creep.memory.tid][n].splice(n, 1);
     	                        break;
     	                    }
     	                }
