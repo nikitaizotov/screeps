@@ -25,13 +25,14 @@ module.exports.loop = function () {
     var upgraders = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'upgrader');
     // var guards = _.filter(Game.creeps, (creep) => creep.memory.role == 'guard');
     //var builders = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'builder');
-    console.log("H:" + harvesters.length + " U:" + upgraders.length);
+    //console.log("H:" + harvesters.length + " U:" + upgraders.length);
+    console.log(roleUpgrader.sources);
 
     if(harvesters.length < 1) {
         spawn_harvester();
     }
     else {
-        if (upgraders.length < 6) {
+        if (upgraders.length < 10) {
             spawn_upgrader();
         }
         // if (builders.length < 1) {

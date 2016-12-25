@@ -1,33 +1,42 @@
 var creepRoleController = require('role.controller');
-
+var sources = [];
+console.log(1111);
 var roleUpgrader = {
-    sources: [],
+    sources: sources,
     interact_with_source: function(creep) {
        // console.log(creep.memory.tid);
         var sources_found = creep.room.find(FIND_SOURCES);
         if (creep.memory.tid == '') {
+            console.log("Work needed for " + creep.name);
            // If creep needs to find a source.
            for (var n in sources_found) {
-               if (sources_found[n].length > 1) {
-                   continue;
-               }
                var sid = sources_found[n].id;
+               if (this.sources[sid]) {
+                   if (this.sources[sid].length > 0) {
+                       console.log("List is full, next please");
+                       continue;
+                   }
+               }
                // Run over the sources and find where we can place our creep.
                if (!this.sources[sid]) {
+                   console.log("New list, adding " + sid + " " + creep.name);
                    this.sources[sid] = [creep.name];
                    creep.memory.tid = sid;
                    break;
                }
                else {
+                   console.log("Searching in old lists.");
                    var found = false;
                     for(var unid in this.sources[sid]) {
                         if (this.sources[sid][unid] == creep.name) {
                             found = true;
+                            break;
                         }
-                        if (found == false) {
-                            creep.memory.tid = sid;
-                            this.sources[sid].push(creep.name);
-                        }
+                    }
+                    if (found == false) {
+                        creep.memory.tid = sid;
+                        this.sources[sid].push(creep.name);
+                        break;
                     }
                }
            }
@@ -69,6 +78,7 @@ var roleUpgrader = {
     	        // Find upgradeController and upgrade it.
     	        if ( creep.memory.charging == false) {
     	            if (creep.memory.tid != '') {
+    	                console.log("Cleaning myself " + creep.name);
     	                for (var n in this.sources[creep.memory.tid]) {
     	                    if (this.sources[creep.memory.tid][n] == creep.name) {
     	                        this.sources[creep.memory.tid][n].splice(n, 1);
