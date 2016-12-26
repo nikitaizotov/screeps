@@ -2,9 +2,11 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 // var roleGuard = require('role.guard');
 var roleGuard = require('role.builder');
+var temp_data = {
+    sources: {}
+};
 
 module.exports.loop = function () {
-    
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
             
@@ -20,15 +22,15 @@ module.exports.loop = function () {
             console.log('Clearing non-existing creep memory:', name);
         }
     }
-
+    
     var harvesters = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'harvester');
     var upgraders = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'upgrader');
     // var guards = _.filter(Game.creeps, (creep) => creep.memory.role == 'guard');
     //var builders = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'builder');
     //console.log("H:" + harvesters.length + " U:" + upgraders.length);
-    console.log(roleUpgrader.sources);
+    //console.log(temp_data.sources['eaa6fb89a4c049c56f73f8ed']);
 
-    if(harvesters.length < 1) {
+    if(harvesters.length < 3) {
         spawn_harvester();
     }
     else {
