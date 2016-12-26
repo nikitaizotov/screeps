@@ -26,18 +26,7 @@ var roleUpgrader = {
     	        }
     	        // Find upgradeController and upgrade it.
     	        if ( creep.memory.charging == false) {
-    	            if (creep.memory.tid != '') {
-    	                for (var n in spawn.memory.sources[creep.memory.tid]) {
-    	                    if (spawn.memory.sources[creep.memory.tid][n]) {
-        	                    if (spawn.memory.sources[creep.memory.tid][n] == creep.name) {
-        	                        spawn.memory.sources[creep.memory.tid].splice(n, 1);
-        	                        break;
-        	                    }
-    	                    }
-    	                }
-    	                creep.memory.tid = '';
-    	            }
-    	            
+    	            creep = creepRoleController.fn_creem_from_source(creep);
         	        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(creep.room.controller);
                   }

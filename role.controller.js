@@ -31,6 +31,20 @@ for (var sid in spawn.memory.sources) {
 }
 
 var roleController = {
+    fn_creem_from_source: function(creep){
+        if (creep.memory.tid != '') {
+    	                for (var n in spawn.memory.sources[creep.memory.tid]) {
+    	                    if (spawn.memory.sources[creep.memory.tid][n]) {
+        	                    if (spawn.memory.sources[creep.memory.tid][n] == creep.name) {
+        	                        spawn.memory.sources[creep.memory.tid].splice(n, 1);
+        	                        break;
+        	                    }
+    	                    }
+    	                }
+    	                creep.memory.tid = '';
+    	            }
+        return creep;
+    },
     // Check if creep is in the given souce list.
     // Will return true if found or false.
     check_creep_sources: function(creep_name, sid) {
