@@ -31,18 +31,26 @@ for (var sid in spawn.memory.sources) {
 }
 
 var roleController = {
+    fn_creep_move_to_source: function(creep) {
+        if (creep.memory.tid) {
+            var source = Game.getObjectById(creep.memory.tid);
+            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(source);
+            }
+        }  
+    },
     fn_creem_from_source: function(creep){
         if (creep.memory.tid != '') {
-    	                for (var n in spawn.memory.sources[creep.memory.tid]) {
-    	                    if (spawn.memory.sources[creep.memory.tid][n]) {
-        	                    if (spawn.memory.sources[creep.memory.tid][n] == creep.name) {
-        	                        spawn.memory.sources[creep.memory.tid].splice(n, 1);
-        	                        break;
-        	                    }
-    	                    }
-    	                }
-    	                creep.memory.tid = '';
-    	            }
+            for (var n in spawn.memory.sources[creep.memory.tid]) {
+    	        if (spawn.memory.sources[creep.memory.tid][n]) {
+        	        if (spawn.memory.sources[creep.memory.tid][n] == creep.name) {
+        	            spawn.memory.sources[creep.memory.tid].splice(n, 1);
+        	            break;
+        	        }
+    	        }
+    	    }
+    	    creep.memory.tid = '';
+    	}
         return creep;
     },
     // Check if creep is in the given souce list.
@@ -79,7 +87,6 @@ var roleController = {
                         if (spawn.memory.sources[sid].length < 1) {
                             spawn.memory.sources[sid].push(creep.name);
                             creep.memory.tid = sid;
-                            return creep;
                         }
                     }
                     else {
@@ -88,7 +95,6 @@ var roleController = {
                         // Add creep in to it.
                         spawn.memory.sources[sid].push(creep.name);
                         creep.memory.tid = sid;
-                        return creep;
                     }
                 }
             }
@@ -97,11 +103,12 @@ var roleController = {
             }
         }
         else {
-            var source = Game.getObjectById(creep.memory.tid);
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
-            }
+            // var source = Game.getObjectById(creep.memory.tid);
+            // if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            //     creep.moveTo(source);
+            // }
         }
+        
         return creep;
     },
     checkIfHarvesterIsFree: function(creep) {
