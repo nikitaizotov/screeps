@@ -43,7 +43,8 @@ module.exports.loop = function () {
     // Spawn new creeps if needed,
     for (var unit in spawn.memory.units) {
         var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit);
-        if (unit.needed < built) {
+        var needed = spawn.memory.units[unit].needed;
+        if (needed > built.length) {
             spawn_rooter(unit);
         }
     }
