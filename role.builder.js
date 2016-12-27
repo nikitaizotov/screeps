@@ -6,7 +6,7 @@
  * var mod = require('role.builder');
  * mod.thing == 'a thing'; // true
  */
-
+var creepRoleController = require('role.controller');
 var roleBuilder = {
     run: function (creep) {
         if(creep.memory.building && creep.carry.energy == 0) {
