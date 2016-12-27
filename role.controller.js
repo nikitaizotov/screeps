@@ -45,7 +45,7 @@ var roleController = {
     	        if (spawn.memory.sources[creep.memory.tid][n]) {
         	        if (spawn.memory.sources[creep.memory.tid][n] == creep.name) {
         	            spawn.memory.sources[creep.memory.tid].splice(n, 1);
-        	            break;
+        	           // break;
         	        }
     	        }
     	    }
@@ -82,11 +82,13 @@ var roleController = {
                     // In this case creep is not in the list.
                     // At first we need to check if that list even exists.
                     if (spawn.memory.sources[sid]) {
+                        //console.log(creep.name + " bbbbb" + spawn.memory.sources[sid].length);
                         // In this case list is exists, add creep in to it.
                         // Also check for a creeps inside of that list.
-                        if (spawn.memory.sources[sid].length < 1) {
+                        if (spawn.memory.sources[sid].length < 4) {
                             spawn.memory.sources[sid].push(creep.name);
                             creep.memory.tid = sid;
+                            break;
                         }
                     }
                     else {
@@ -95,6 +97,7 @@ var roleController = {
                         // Add creep in to it.
                         spawn.memory.sources[sid].push(creep.name);
                         creep.memory.tid = sid;
+                        break;
                     }
                 }
             }
@@ -103,10 +106,11 @@ var roleController = {
             }
         }
         else {
-            // var source = Game.getObjectById(creep.memory.tid);
-            // if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            //     creep.moveTo(source);
-            // }
+            creep.say("I have direction");
+            var source = Game.getObjectById(creep.memory.tid);
+            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(source);
+            }
         }
         
         return creep;
