@@ -106,7 +106,7 @@ var roleController = {
             }
         }
         else {
-            creep.say("I have direction");
+            //creep.say("I have direction");
             var source = Game.getObjectById(creep.memory.tid);
             if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
