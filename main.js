@@ -1,8 +1,3 @@
-var roleHarvester = require('role.harvester');
-var roleUpgrader = require('role.upgrader');
-// var roleGuard = require('role.guard');
-var roleBuilder = require('role.builder');
-var extentions = require('extentions.module');
 var temp_data = {
     sources: {},
     units: {
@@ -25,9 +20,15 @@ var temp_data = {
 // Save settings to game memory.
 var spawns = _.filter(Game.spawns);
 var spawn = spawns[0];
-if (!spawn.memory) {
+if (!spawn.memory.units) {
     spawn.memory = temp_data;
 }
+
+var roleHarvester = require('role.harvester');
+var roleUpgrader = require('role.upgrader');
+// var roleGuard = require('role.guard');
+var roleBuilder = require('role.builder');
+var extentions = require('extentions.module');
 
 module.exports.loop = function () {
     extentions.fn_build_roads();

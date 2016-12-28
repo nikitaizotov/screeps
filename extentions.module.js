@@ -17,8 +17,9 @@ var extentions = {
             // Check if controller is upgraded to a minimum level.
             if (Game.rooms[room_it].controller.level > 1) {
                 // Check if energy level is over the minimum requirements.
-                if (Game.rooms[room_it].controller.progress > spawn.settings.build_roads_on) {
-                    
+                if (Game.rooms[room_it].controller.progress > spawn.memory.settings.build_roads_on) {
+                    // Get all structures in the room.
+                    // Connect all structures.
                 }
             }
         }
