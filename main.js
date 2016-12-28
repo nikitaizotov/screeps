@@ -2,6 +2,7 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 // var roleGuard = require('role.guard');
 var roleBuilder = require('role.builder');
+var extentions = require('extentions.module');
 var temp_data = {
     sources: {},
     units: {
@@ -15,16 +16,21 @@ var temp_data = {
             needed: 1,
         },
     },
+    constructions: {},
+    settings: {
+      build_roads_on: 1000,  
+    },
 };
 
 // Save settings to game memory.
 var spawns = _.filter(Game.spawns);
 var spawn = spawns[0];
-if (!spawn.memory.units) {
-    spawn.memory.units = temp_data.units;
+if (!spawn.memory) {
+    spawn.memory = temp_data;
 }
 
 module.exports.loop = function () {
+    extentions.fn_build_roads();
     // Clean not existed creeps.
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
