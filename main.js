@@ -40,12 +40,17 @@ module.exports.loop = function () {
         }
     }
     
+    var harvesters = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'harvester');
     // Spawn new creeps if needed,
     for (var unit in spawn.memory.units) {
         var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit);
         var needed = spawn.memory.units[unit].needed;
-        if (needed > built.length) {
-            spawn_rooter(unit);
+        if (harvesters.built < 1) {
+            spawn_rooter('harvester');
+        } else {
+            if (needed > built.length) {
+                spawn_rooter(unit);
+            }
         }
     }
     
