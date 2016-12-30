@@ -53,12 +53,12 @@ module.exports.loop = function () {
     for (var index_spawns in spawns) {
         var spawn_obj = spawns[index_spawns];
         spawn_obj.fn_build_roads();
-        
+        console.log(spawn_obj.room.name);
         // Run over the spawns units and controll population.
-        var harvesters = _.filter(spawn_obj.room.creeps, (creep) => creep.memory.temp_role == 'harvester');
+        var harvesters = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'harvester', (room) => spawn_obj.room.name);
         // Spawn new creeps if needed,
         for (var unit in spawn_obj.memory.units) {
-            var built = _.filter(Game.creeps, (creep) => creep.memory.role == unit, (room) => 'sim');
+            var built = _.filter(Game.creeps, (creep) => creep.memory.role == unit, (room) => spawn_obj.room.name);
             var needed = spawn_obj.memory.units[unit].needed;
             if (harvesters.length < 3) {
                 spawn_rooter('harvester', spawn_obj.name);
