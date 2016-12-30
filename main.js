@@ -8,7 +8,7 @@ var temp_data = {
             needed: 3,
         },
         builder: {
-            needed: 1,
+            needed: 3,
         },
     },
     constructions: {},

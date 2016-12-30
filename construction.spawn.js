@@ -1,5 +1,10 @@
 Spawn.prototype.fn_build_roads = function() {
-    var source = this.pos.findClosestByRange(FIND_SOURCES);
+    var sources = this.room.find(FIND_SOURCES);
+    for (var source_i in sources) {
+        var source = sources[source_i];
+        var path = this.room.findPath(source.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
+        this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+    }
     var path = this.room.findPath(this.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
     this.fn_create_construction_sites(path, STRUCTURE_ROAD);
 }
