@@ -118,6 +118,7 @@ var roleController = {
             console.log("Role switched to upgrader");
             creep.memory.temp_role = 'harvester';
             creep.memory.role = "upgrader";
+            creep.memory.charging = true;
         }
         return creep;
     },

@@ -26,8 +26,9 @@ var roleUpgrader = {
     	        if (creep.memory.charging == true && creep.carryCapacity == creep.carry.energy) {
     	            creep.memory.charging = false;
     	        }
+    	        
     	        // Find upgradeController and upgrade it.
-    	        if ( creep.memory.charging == false) {
+    	        if (creep.memory.charging == false) {
     	            creep = creepRoleController.fn_creem_from_source(creep);
     	            creepRoleController.fn_creep_move_to_source(creep);
         	        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {

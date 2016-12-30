@@ -13,15 +13,17 @@ var temp_data = {
     },
     constructions: {},
     settings: {
-      build_roads_on: 1000,  
+      build_roads_on: 1,  
     },
 };
 
 // Save settings to game memory.
 var spawns = _.filter(Game.spawns);
-var spawn = spawns[0];
-if (!spawn.memory.units) {
-    spawn.memory = temp_data;
+for (var index_spawns in spawns) { 
+    var spawn = spawns[index_spawns];
+    if (!spawn.memory.units) {
+        spawn.memory = temp_data;
+    }
 }
 
 var roleHarvester = require('role.harvester');
@@ -29,9 +31,15 @@ var roleUpgrader = require('role.upgrader');
 // var roleGuard = require('role.guard');
 var roleBuilder = require('role.builder');
 var extentions = require('extentions.module');
+require('construction.spawn');
 
 module.exports.loop = function () {
-    extentions.fn_build_roads();
+    var spawns = _.filter(Game.spawns);
+    for (var index_spawns in spawns) {
+        var spawn_obj = spawns[index_spawns];
+        spawn_obj.fn_build_roads();
+    }
+    
     // Clean not existed creeps.
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
@@ -52,7 +60,7 @@ module.exports.loop = function () {
     for (var unit in spawn.memory.units) {
         var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit);
         var needed = spawn.memory.units[unit].needed;
-        if (harvesters.built < 1) {
+        if (harvesters.built < 3) {
             spawn_rooter('harvester');
         } else {
             if (needed > built.length) {
