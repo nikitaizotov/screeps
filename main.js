@@ -1,7 +1,3 @@
-var roleHarvester = require('role.harvester');
-var roleUpgrader = require('role.upgrader');
-// var roleGuard = require('role.guard');
-var roleBuilder = require('role.builder');
 var temp_data = {
     sources: {},
     units: {
@@ -9,20 +5,33 @@ var temp_data = {
             needed: 3,
         },
         ugrader: {
-            needed: 3,
+            needed: 5,
         },
         builder: {
-            needed: 1,
+            needed: 5,
         },
+    },
+    constructions: {},
+    settings: {
+      build_roads_on: 1,  
     },
 };
 
 // Save settings to game memory.
 var spawns = _.filter(Game.spawns);
-var spawn = spawns[0];
-if (!spawn.memory.units) {
-    spawn.memory.units = temp_data.units;
+for (var index_spawns in spawns) { 
+    var spawn = spawns[index_spawns];
+    if (!spawn.memory.units) {
+        spawn.memory = temp_data;
+    }
 }
+
+var roleHarvester = require('role.harvester');
+var roleUpgrader = require('role.upgrader');
+// var roleGuard = require('role.guard');
+var roleBuilder = require('role.builder');
+var extentions = require('extentions.module');
+require('construction.spawn');
 
 module.exports.loop = function () {
     // Clean not existed creeps.
@@ -40,12 +49,24 @@ module.exports.loop = function () {
         }
     }
     
-    // Spawn new creeps if needed,
-    for (var unit in spawn.memory.units) {
-        var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit);
-        var needed = spawn.memory.units[unit].needed;
-        if (needed > built.length) {
-            spawn_rooter(unit);
+    var spawns = _.filter(Game.spawns);
+    for (var index_spawns in spawns) {
+        var spawn_obj = spawns[index_spawns];
+        spawn_obj.fn_build_roads();
+        
+        // Run over the spawns units and controll population.
+        var harvesters = _.filter(spawn_obj.room.creeps, (creep) => creep.memory.temp_role == 'harvester');
+        // Spawn new creeps if needed,
+        for (var unit in spawn_obj.memory.units) {
+            var built = _.filter(Game.creeps, (creep) => creep.memory.role == unit, (room) => 'sim');
+            var needed = spawn_obj.memory.units[unit].needed;
+            if (harvesters.length < 3) {
+                spawn_rooter('harvester', spawn_obj.name);
+            } else {
+                if (needed > built.length) {
+                    spawn_rooter(unit, spawn_obj.name);
+                }
+            }
         }
     }
     
@@ -73,39 +94,39 @@ module.exports.loop = function () {
 }
 
 // Function will spawn creep from given name.
-function spawn_rooter(uname) {
+function spawn_rooter(uname, spawn) {
     switch (uname) {
         case "harvester":
-                spawn_harvester();
+                spawn_harvester(spawn);
             break;
         case "upgrader":
-                spawn_upgrader();
+                spawn_upgrader(spawn);
             break;
         case "builder":
-                spawn_builder();
+                spawn_builder(spawn);
             break;
     }
 }
 
 // Spawn upgrader.
-function spawn_upgrader() {
+function spawn_upgrader(spawn) {
     var body = [WORK,CARRY,MOVE];
-    spawn_creep('Spawn1', body, undefined, {role: 'upgrader', temp_role: 'upgrader', tid: ''});
+    spawn_creep(spawn, body, undefined, {role: 'upgrader', temp_role: 'upgrader', tid: ''});
 }
 
 // Spawn builder.
-function spawn_builder() {
+function spawn_builder(spawn) {
     var body = [WORK,CARRY,MOVE];
-    spawn_creep('Spawn1', body, undefined, {role: 'builder', temp_role: 'builder', tid: ''});
+    spawn_creep(spawn, body, undefined, {role: 'builder', temp_role: 'builder', tid: ''});
 }
 
 // Spawn havester.
-function spawn_harvester() {
+function spawn_harvester(spawn) {
     // if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
     //     spawn.createCreep(body, name);
     // }
     var body = [WORK,CARRY,MOVE];
-    spawn_creep('Spawn1', body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
+    spawn_creep(spawn, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
 }
 
 // function spawn_guard(spawn) {

@@ -31,7 +31,7 @@ var roleBuilder = {
 	       creep = creepRoleController.interact_with_source(creep);
     	   creepRoleController.fn_creep_move_to_source(creep);
 	    }
-    }
+    },
 }
 
 module.exports = roleBuilder;

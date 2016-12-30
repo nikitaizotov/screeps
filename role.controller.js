@@ -7,12 +7,9 @@
  * mod.thing == 'a thing'; // true
  */
 
+// Save settings to game memory.
 var spawns = _.filter(Game.spawns);
 var spawn = spawns[0];
-
-if (!spawn.memory.sources) {
-    spawn.memory.sources = {};
-}
 
 // Clean spurces.
 for (var sid in spawn.memory.sources) {
@@ -121,6 +118,7 @@ var roleController = {
             console.log("Role switched to upgrader");
             creep.memory.temp_role = 'harvester';
             creep.memory.role = "upgrader";
+            creep.memory.charging = true;
         }
         return creep;
     },
