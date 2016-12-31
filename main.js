@@ -98,6 +98,8 @@ module.exports.loop = function () {
             roleUpgrader.run(creep);
         }
         if(creep.memory.role == 'scout') {
+            // creep.memory.role = 'harvester';
+            //  creep.memory.temp_role = 'harvester';
             roleScout.run(creep);
         }
         if(creep.memory.role == 'builder') {
@@ -117,6 +119,7 @@ function spawn_rooter(uname, spawn) {
             break;
         case "builder":
                 spawn_builder(spawn);
+            break;
         case "scout":
                 spawn_scout(spawn);
             break;

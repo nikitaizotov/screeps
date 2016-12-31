@@ -9,7 +9,7 @@
 var scout = {
     // Function will get all neigbour rooms.
     fn_get_avail_rooms: function(creep) {
-        console.log(Game.map.describeExits('sim'));
+        //console.log(Game.map.describeExits('sim'));
     },
     run: function(creep) {
         this.fn_get_avail_rooms(creep);
