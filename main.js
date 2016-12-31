@@ -14,7 +14,7 @@ var temp_data = {
             build_on: 1,
         },
         scout: {
-            needed: 1,
+            needed: 0,
             build_on: 3,
         },
     },
@@ -85,7 +85,7 @@ module.exports.loop = function () {
     // Contoll creeps.
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-        creep.say(creep.memory.role);
+        // creep.say(creep.memory.role);
         if (Memory.creeps[name] == false) {
             console.log("Not legal creep, removing.");
             creep.suicide();
