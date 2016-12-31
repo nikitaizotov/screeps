@@ -1,3 +1,95 @@
+Spawn.prototype.fn_controll_towers = function() {
+    var towers = this.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return structure.structureType == STRUCTURE_TOWER;
+                    }
+            });
+    for (var i in towers) {
+        var tower = towers[i];
+        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (structure) => structure.hits < structure.hitsMax
+        });
+        if(closestDamagedStructure) {
+            tower.repair(closestDamagedStructure);
+        }
+
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile) {
+            tower.attack(closestHostile);
+        }
+    }
+}
+
+Spawn.prototype.fn_build_towers = function() {
+    if (!this.room.memory.towers) {
+      this.room.memory.towers = 0;
+    }
+    var avail = 0;
+    switch(this.room.controller.level) {
+        case 1:
+        case 2:
+            avail = 0;
+        break;
+        case 3:
+        case 4:
+            avail = 1;
+        break;
+        case 5:
+        case 6:
+            avail = 2;
+        break;
+        case 7:
+            avail = 3;
+        break;
+        default:
+            avail = 6;
+        break;
+    }
+    if (this.room.memory.towers < avail) {
+        // This part should be refactored, fast solution.
+        if (this.room.controller.level == 3 || this.room.controller.level == 4) {
+            // Left top corner.
+            var new_x = this.fn_calculate_posible_path(this.pos.x - 5);
+            var new_y = this.fn_calculate_posible_path(this.pos.y - 5);
+        }
+        if (this.room.controller.level == 4 || this.room.controller.level == 5) {
+            // Right top corner.
+            var new_x = this.fn_calculate_posible_path(this.pos.x + 5);
+            var new_y = this.fn_calculate_posible_path(this.pos.y - 5);
+        }
+        if (this.room.controller.level == 7) {
+            // Right bottom corner.
+            var new_x = this.fn_calculate_posible_path(this.pos.x + 5);
+            var new_y = this.fn_calculate_posible_path(this.pos.y + 5);
+        }
+        if (this.room.controller.level == 8) {
+            // Left bottom corner.
+            var new_x = this.fn_calculate_posible_path(this.pos.x - 5);
+            var new_y = this.fn_calculate_posible_path(this.pos.y + 5);
+        }
+        
+        do {
+            for (var y = 0; y < 20; y+=1) {
+                for (var x = 0; x < 20; x+=1) {
+                    if (this.room.memory.towers < avail) {
+                        var pos_x = new_x + x;
+                        var pos_y = new_y + y;
+                        var roomPosition = this.room.getPositionAt(pos_x, pos_y);
+                        if (this.room.lookForAt('structure', roomPosition).length == 0 && 
+                            this.room.lookForAt('constructionSite', roomPosition).length == 0) {
+                                console.log(11111);
+                                // Build for a structure.
+                                this.room.createConstructionSite(roomPosition, STRUCTURE_TOWER);
+                                this.room.memory.towers++;
+                        }
+                    }
+                }
+            }
+        }
+        while (this.room.memory.towers < avail);
+    }
+}
+
 Spawn.prototype.fn_build_extentions = function() {
     if (!this.room.memory.extensions) {
        this.room.memory.extensions = 0;
@@ -18,17 +110,9 @@ Spawn.prototype.fn_build_extentions = function() {
         break;
     }
    
-    var target_1 = new RoomPosition(this.fn_calculate_posible_path(this.pos.x - 16), 
-        this.fn_calculate_posible_path(this.pos.y - 16), 
-        this.pos.roomName
-    );
-    var new_x = this.fn_calculate_posible_path(this.pos.x - 8);
-    var new_y = this.fn_calculate_posible_path(this.pos.y - 8);
-    var flag_break = false;
-   
-   console.log(this.room.memory.extensions)
-   
     if (this.room.memory.extensions < extensions_avail) {
+        var new_x = this.fn_calculate_posible_path(this.pos.x - 8);
+        var new_y = this.fn_calculate_posible_path(this.pos.y - 8);
         do {
             for (var y = 0; y < 20; y+=2) {
                 for (var x = 0; x < 20; x+=2) {
