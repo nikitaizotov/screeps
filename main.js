@@ -4,11 +4,11 @@ var temp_data = {
         harvester: {
             needed: 2,
         },
-        ugrader: {
-            needed: 3,
+        upgrader: {
+            needed: 2,
         },
         builder: {
-            needed: 3,
+            needed: 4,
         },
     },
     constructions: {},
@@ -21,6 +21,7 @@ var temp_data = {
 var spawns = _.filter(Game.spawns);
 for (var index_spawns in spawns) { 
     var spawn = spawns[index_spawns];
+    // spawn.memory.units = temp_data.units;
     if (!spawn.memory.units) {
         spawn.memory = temp_data;
     }
@@ -52,8 +53,8 @@ module.exports.loop = function () {
     var spawns = _.filter(Game.spawns);
     for (var index_spawns in spawns) {
         var spawn_obj = spawns[index_spawns];
-        // spawn_obj.fn_build_roads();
-        // spawn_obj.fn_build_extentions();
+        spawn_obj.fn_build_roads();
+        spawn_obj.fn_build_extentions();
         spawn_obj.fn_build_towers();
         spawn_obj.fn_controll_towers();
         
@@ -61,12 +62,13 @@ module.exports.loop = function () {
         var harvesters = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'harvester', (room) => spawn_obj.room.name);
         // Spawn new creeps if needed,
         for (var unit in spawn_obj.memory.units) {
-            var built = _.filter(Game.creeps, (creep) => creep.memory.role == unit, (room) => spawn_obj.room.name);
+            var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit, (room) => spawn_obj.room.name);
             var needed = spawn_obj.memory.units[unit].needed;
-            if (harvesters.length < 3) {
+            if (harvesters.length < 3 && harvesters.length < spawn_obj.memory.units['harvester'].needed) {
                 spawn_rooter('harvester', spawn_obj.name);
             } else {
                 if (needed > built.length) {
+                    console.log(unit + " needed")
                     spawn_rooter(unit, spawn_obj.name);
                 }
             }
