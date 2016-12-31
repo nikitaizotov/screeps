@@ -68,7 +68,6 @@ module.exports.loop = function () {
                 spawn_rooter('harvester', spawn_obj);
             } else {
                 if (needed > built.length) {
-                    console.log(unit + " needed")
                     spawn_rooter(unit, spawn_obj);
                 }
             }
@@ -132,7 +131,12 @@ function fn_get_worker_body(spawn) {
                     body = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
                 }
                 else {
-                    body = [WORK, WORK ,WORK, CARRY, MOVE];
+                    if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
+                        body = [WORK, WORK ,WORK, CARRY, MOVE];
+                    }
+                    else {
+                        body = [WORK,CARRY,MOVE];
+                    }
                 }
             break;
     }
