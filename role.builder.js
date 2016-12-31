@@ -25,7 +25,16 @@ var roleBuilder = {
 	        
 	        // Search for a targets that will be a tower.
 	        for (var i in targets) {
-	            // If this is tower change flag to false and move creep to it.
+	            // If this is a road change flag to false and move creep to it.
+	            if (targets[i].structureType == 'road') {
+	                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[i]);
+                        flag_tower_found = true;
+	                    break;
+                    }
+	            } 
+	            
+	            // If this is a tower change flag to false and move creep to it.
 	            if (targets[i].structureType == 'tower') {
 	                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(targets[i]);
