@@ -53,7 +53,7 @@ module.exports.loop = function () {
     var spawns = _.filter(Game.spawns);
     for (var index_spawns in spawns) {
         var spawn_obj = spawns[index_spawns];
-        spawn_obj.fn_build_roads();
+        // spawn_obj.fn_build_roads();
         spawn_obj.fn_build_extentions();
         spawn_obj.fn_build_towers();
         spawn_obj.fn_controll_towers();

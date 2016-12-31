@@ -149,21 +149,23 @@ Spawn.prototype.fn_calculate_posible_path = function(coordinates) {
 
 // This function will build roads and connects all structures in the room.
 Spawn.prototype.fn_build_roads = function() {
-    // Find sources and build roads from them to room controller,
-    // and from spawn to sources
-    var sources = this.room.find(FIND_SOURCES);
-    for (var source_i in sources) {
-        var source = sources[source_i];
-        // Road from source to controller.
-        var path = this.room.findPath(source.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
-        this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-        // Road from Spawn to source.
-        var path = this.room.findPath(this.pos, source.pos, {ignoreRoads: true, ignoreCreeps:true});
+    if (this.room.controller.level == 1) {
+        // Find sources and build roads from them to room controller,
+        // and from spawn to sources
+        var sources = this.room.find(FIND_SOURCES);
+        for (var source_i in sources) {
+            var source = sources[source_i];
+            // Road from source to controller.
+            var path = this.room.findPath(source.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
+            this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+            // Road from Spawn to source.
+            var path = this.room.findPath(this.pos, source.pos, {ignoreRoads: true, ignoreCreeps:true});
+            this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+        }
+        // Road from spawn to controller.
+        var path = this.room.findPath(this.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
         this.fn_create_construction_sites(path, STRUCTURE_ROAD);
     }
-    // Road from spawn to controller.
-    var path = this.room.findPath(this.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
-    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
 }
 
 // This function will create a structure on a given path.
