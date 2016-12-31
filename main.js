@@ -3,12 +3,19 @@ var temp_data = {
     units: {
         harvester: {
             needed: 2,
+            build_on: 1,
         },
         upgrader: {
             needed: 2,
+            build_on: 1,
         },
         builder: {
             needed: 4,
+            build_on: 1,
+        },
+        scout: {
+            needed: 1,
+            build_on: 3,
         },
     },
     constructions: {},
@@ -21,7 +28,7 @@ var temp_data = {
 var spawns = _.filter(Game.spawns);
 for (var index_spawns in spawns) { 
     var spawn = spawns[index_spawns];
-    // spawn.memory.units = temp_data.units;
+    spawn.memory.units = temp_data.units;
     if (!spawn.memory.units) {
         spawn.memory = temp_data;
     }
@@ -29,7 +36,7 @@ for (var index_spawns in spawns) {
 
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
-// var roleGuard = require('role.guard');
+var roleScout = require('role.scout');
 var roleBuilder = require('role.builder');
 var extentions = require('extentions.module');
 require('construction.spawn');
@@ -64,11 +71,11 @@ module.exports.loop = function () {
         for (var unit in spawn_obj.memory.units) {
             var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit, (room) => spawn_obj.room.name);
             var needed = spawn_obj.memory.units[unit].needed;
+            var build_on = spawn_obj.memory.units[unit].build_on;
             if (harvesters.length < 3 && harvesters.length < spawn_obj.memory.units['harvester'].needed) {
                 spawn_rooter('harvester', spawn_obj.name);
             } else {
-                if (needed > built.length) {
-                    console.log(unit + " needed")
+                if (needed > built.length && build_on =< spawn_obj.room.controller.levels) {
                     spawn_rooter(unit, spawn_obj.name);
                 }
             }
@@ -89,9 +96,9 @@ module.exports.loop = function () {
         if(creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);
         }
-        // if(creep.memory.role == 'guard') {
-        //     roleGuard.run(creep);
-        // }
+        if(creep.memory.role == 'scout') {
+            roleScout.run(creep);
+        }
         if(creep.memory.role == 'builder') {
             roleBuilder.run(creep);
         }
@@ -109,6 +116,8 @@ function spawn_rooter(uname, spawn) {
             break;
         case "builder":
                 spawn_builder(spawn);
+        case "scout":
+                spawn_scout(spawn);
             break;
     }
 }
@@ -132,6 +141,12 @@ function spawn_harvester(spawn) {
     // }
     var body = [WORK,CARRY,MOVE];
     spawn_creep(spawn, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
+}
+
+// Spawn havester.
+function spawn_scout(spawn) {
+    var body = [MOVE,MOVE,MOVE];
+    spawn_creep(spawn, body, undefined, {role: 'scout', temp_role: 'scout', tid: '', data: {}});
 }
 
 // function spawn_guard(spawn) {
