@@ -21,31 +21,37 @@ var roleBuilder = {
 
 	    if(creep.memory.building) {
 	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-	        var flag_tower_found = false;
+	        var flag_obj_found = false;
 	        
 	        // Search for a targets that will be a tower.
 	        for (var i in targets) {
 	            // If this is a road change flag to false and move creep to it.
+	            //console.log(targets[i].structureType);
 	            if (targets[i].structureType == 'road') {
 	                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(targets[i]);
-                        flag_tower_found = true;
-	                    break;
-                    }
-	            } 
-	            
-	            // If this is a tower change flag to false and move creep to it.
-	            if (targets[i].structureType == 'tower') {
-	                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(targets[i]);
-                        flag_tower_found = true;
+                        flag_obj_found = true;
 	                    break;
                     }
 	            } 
 	        }
 	        
+	        if (flag_obj_found == false) {
+    	        // Search for a targets that will be a tower.
+    	        for (var i in targets) {
+                    if (targets[i].structureType == 'tower') {
+    	                // If this is a tower change flag to false and move creep to it.
+    	                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(targets[i]);
+                            flag_obj_found = true;
+    	                    break;
+                        }
+    	            } 
+    	        }
+	        }
+	        
 	        // If tower was found this code should be not launced.
-	        if (flag_tower_found == false) {
+	        if (flag_obj_found == false) {
                 if(targets.length) {
                     if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(targets[0]);
