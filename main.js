@@ -2,13 +2,13 @@ var temp_data = {
     sources: {},
     units: {
         harvester: {
-            needed: 2,
+            needed: 5,
         },
         upgrader: {
             needed: 2,
         },
         builder: {
-            needed: 4,
+            needed: 3,
         },
     },
     constructions: {},
@@ -21,7 +21,7 @@ var temp_data = {
 var spawns = _.filter(Game.spawns);
 for (var index_spawns in spawns) { 
     var spawn = spawns[index_spawns];
-    // spawn.memory.units = temp_data.units;
+    //spawn.memory.units = temp_data.units;
     if (!spawn.memory.units) {
         spawn.memory = temp_data;
     }

@@ -27,12 +27,10 @@ var roleHarvester = {
     	        for (var i in targets) {
     	            // If this is tower change flag to false and move creep to it.
     	            if (targets[i].structureType == 'tower') {
-    	                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
-                            if(creep.transfer(targets[i], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                                creep.moveTo(targets[i]);
-                                flag_tower_found = true;
-    	                        break;
-                            }
+                        if(creep.transfer(targets[i], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(targets[i]);
+                            flag_tower_found = true;
+    	                    break;
                         }
     	            } 
     	        }
