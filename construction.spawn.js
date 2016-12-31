@@ -77,10 +77,16 @@ Spawn.prototype.fn_build_towers = function() {
                         var roomPosition = this.room.getPositionAt(pos_x, pos_y);
                         if (this.room.lookForAt('structure', roomPosition).length == 0 && 
                             this.room.lookForAt('constructionSite', roomPosition).length == 0) {
-                                console.log(11111);
                                 // Build for a structure.
                                 this.room.createConstructionSite(roomPosition, STRUCTURE_TOWER);
                                 this.room.memory.towers++;
+                                // var road_from = new RoomPosition(10, 25, 'sim');
+                                var sources = this.room.find(FIND_SOURCES);
+                                for (var source_i in sources) {
+                                    var source = sources[source_i];
+                                    var path = this.room.findPath(source.pos, roomPosition, {ignoreRoads: true, ignoreCreeps:true});
+                                    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+                                }
                         }
                     }
                 }
@@ -125,6 +131,13 @@ Spawn.prototype.fn_build_extentions = function() {
                                 // Build for a structure.
                                 this.room.createConstructionSite(roomPosition, STRUCTURE_EXTENSION);
                                 this.room.memory.extensions++;
+                                // var road_from = new RoomPosition(10, 25, 'sim');
+                                var sources = this.room.find(FIND_SOURCES);
+                                for (var source_i in sources) {
+                                    var source = sources[source_i];
+                                    var path = this.room.findPath(source.pos, roomPosition, {ignoreRoads: true, ignoreCreeps:true});
+                                    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+                                }
                         }
                     }
                 }
