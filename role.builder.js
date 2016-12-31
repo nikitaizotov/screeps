@@ -21,11 +21,28 @@ var roleBuilder = {
 
 	    if(creep.memory.building) {
 	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            if(targets.length) {
-                if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0]);
+	        var flag_tower_found = false;
+	        
+	        // Search for a targets that will be a tower.
+	        for (var i in targets) {
+	            // If this is tower change flag to false and move creep to it.
+	            if (targets[i].structureType == 'tower') {
+	                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[i]);
+                        flag_tower_found = true;
+	                    break;
+                    }
+	            } 
+	        }
+	        
+	        // If tower was found this code should be not launced.
+	        if (flag_tower_found == false) {
+                if(targets.length) {
+                    if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[0]);
+                    }
                 }
-            }
+	        }
 	    }
 	    else {
 	       creep = creepRoleController.interact_with_source(creep);
