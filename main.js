@@ -73,10 +73,10 @@ module.exports.loop = function () {
             var needed = spawn_obj.memory.units[unit].needed;
             var build_on = spawn_obj.memory.units[unit].build_on;
             if (harvesters.length < 3 && harvesters.length < spawn_obj.memory.units['harvester'].needed) {
-                spawn_rooter('harvester', spawn_obj.name);
+                spawn_rooter('harvester', spawn_obj);
             } else {
                 if (needed > built.length && build_on <= spawn_obj.room.controller.level) {
-                    spawn_rooter(unit, spawn_obj.name);
+                    spawn_rooter(unit, spawn_obj);
                 }
             }
         }
@@ -128,14 +128,14 @@ function spawn_rooter(uname, spawn) {
 
 // Spawn upgrader.
 function spawn_upgrader(spawn) {
-    var body = [WORK,CARRY,MOVE];
-    spawn_creep(spawn, body, undefined, {role: 'upgrader', temp_role: 'upgrader', tid: ''});
+    var body = fn_get_worker_body(spawn);
+    spawn_creep(spawn.name, body, undefined, {role: 'upgrader', temp_role: 'upgrader', tid: ''});
 }
 
 // Spawn builder.
 function spawn_builder(spawn) {
-    var body = [WORK,CARRY,MOVE];
-    spawn_creep(spawn, body, undefined, {role: 'builder', temp_role: 'builder', tid: ''});
+    var body = fn_get_worker_body(spawn);
+    spawn_creep(spawn.name, body, undefined, {role: 'builder', temp_role: 'builder', tid: ''});
 }
 
 // Spawn havester.
@@ -143,14 +143,14 @@ function spawn_harvester(spawn) {
     // if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
     //     spawn.createCreep(body, name);
     // }
-    var body = [WORK,CARRY,MOVE];
-    spawn_creep(spawn, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
+    var body = fn_get_worker_body(spawn);
+    spawn_creep(spawn.name, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
 }
 
 // Spawn havester.
 function spawn_scout(spawn) {
     var body = [MOVE,MOVE,MOVE];
-    spawn_creep(spawn, body, undefined, {role: 'scout', temp_role: 'scout', tid: '', data: {}});
+    spawn_creep(spawn.name, body, undefined, {role: 'scout', temp_role: 'scout', tid: '', data: {}});
 }
 
 // function spawn_guard(spawn) {
@@ -166,4 +166,34 @@ function spawn_creep(spawn, body, name, options) {
         var newName = Game.spawns[spawn].createCreep(body, name, options);
         console.log('Spawning new ' + options.role + ': ' + newName);
     }
+}
+
+function fn_get_worker_body(spawn) {
+    var body = [];
+    switch (spawn.room.controller.level) {
+        case 1:
+            body = [WORK,CARRY,MOVE];
+        break;
+        case 2:
+            if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
+                body = [WORK, WORK ,WORK, CARRY, MOVE];
+            }
+            else {
+                body = [WORK,CARRY,MOVE];
+            }
+            break;
+            default:
+              if(spawn.canCreateCreep([WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], undefined) == OK) {
+                  body = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
+                }
+                else {
+                    if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
+                        body = [WORK, WORK ,WORK, CARRY, MOVE];
+                    }
+                  else {
+                        body = [WORK,CARRY,MOVE];
+                     }
+              }
+    }
+   return body;
 }
