@@ -11,13 +11,6 @@ var cleaner = {
         // Clean not existed creeps.
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
-                for(var n in roleUpgrader.sources) {
-                    for (var z in roleUpgrader.sources[n]) {
-                        if (roleUpgrader.sources[n][z] == name) {
-                            delete roleUpgrader.sources[n][z];
-                        }
-                    }
-                }
                 delete Memory.creeps[name];
                 console.log('Clearing non-existing creep memory:', name);
             }
