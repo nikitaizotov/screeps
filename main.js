@@ -1,14 +1,21 @@
+// Basic functions.
 var Routines = require('routines');
+// Memory cleaning functions.
 var Cleaner = require('cleaner');
+// Roles.
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleScout = require('role.scout');
 var roleBuilder = require('role.builder');
+// Extend spawn class.
 require('construction.spawn');
 
 module.exports.loop = function () {
+    // Clean not existed creeps from sources.
     Cleaner.fn_clean_sources();
+    // Remove not existed creeps from game.
     Cleaner.fn_clean_creeps();
+    // Settings to memory.
     Routines.fn_unit_settings_to_memory();
     
     var spawns = _.filter(Game.spawns);

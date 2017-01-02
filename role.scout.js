@@ -15,7 +15,7 @@ var scout = {
         var current_room_connecions = Game.map.describeExits(current_room);
         
         for(var room_i in current_room_connecions) {
-            console.log(current_room_connecions[room_i])
+           // console.log(current_room_connecions[room_i])
         }
         
         // Check if room is discovered already.

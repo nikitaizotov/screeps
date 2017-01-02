@@ -97,9 +97,15 @@ Spawn.prototype.fn_build_towers = function() {
 }
 
 Spawn.prototype.fn_build_extentions = function() {
-    if (!this.room.memory.extensions) {
-       this.room.memory.extensions = 0;
+    var exts = this.room.find(STRUCTURE_EXTENSION);
+    var csites = this.room.find(FIND_CONSTRUCTION_SITES);
+    this.room.memory.extensions = exts.length;
+    for (var csite_i in csites) {
+        if (csites[csite_i].structureType == 'extension') {
+            this.room.memory.extensions += 1;
+        }
     }
+
     var extensions_avail = 0;
     switch(this.room.controller.level) {
         case 1:
@@ -116,6 +122,7 @@ Spawn.prototype.fn_build_extentions = function() {
         break;
     }
    
+    // REFACTOR NEEDED!!!
     if (this.room.memory.extensions < extensions_avail) {
         var new_x = this.fn_calculate_posible_path(this.pos.x - 8);
         var new_y = this.fn_calculate_posible_path(this.pos.y - 8);
