@@ -14,8 +14,18 @@ var scout = {
         // Get all availible exits from this room
         var current_room_connecions = Game.map.describeExits(current_room);
         
+        if (!creep.room.memory.connected) {
+            creep.room.memory.connected = {};
+        }
+        
         for(var room_i in current_room_connecions) {
-           // console.log(current_room_connecions[room_i])
+           if (!creep.room.memory.connected[current_room_connecions[room_i]]) {
+               creep.room.memory.connected[current_room_connecions[room_i]] = {
+                   name: current_room_connecions[room_i],
+                   visited: false,
+                   resource_energy: 0,
+               }
+           }
         }
         
         // Check if room is discovered already.

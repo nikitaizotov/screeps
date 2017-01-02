@@ -107,10 +107,15 @@ function spawn_harvester(spawn) {
     spawn_creep(spawn.name, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
 }
 
-// Spawn havester.
+// Spawn scout.
 function spawn_scout(spawn) {
     var body = [MOVE,MOVE,MOVE];
-    spawn_creep(spawn.name, body, undefined, {role: 'scout', temp_role: 'scout', tid: '', data: {}});
+    spawn_creep(spawn.name, body, undefined, {
+        role: 'scout', 
+        temp_role: 'scout', 
+        tid: '', data: {},
+        room: spawn.room.name,
+    });
 }
 
 // function spawn_guard(spawn) {
