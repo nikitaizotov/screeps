@@ -6,7 +6,7 @@ var temp_data = {
             build_on: 1,
         },
         upgrader: {
-            needed: 3,
+            needed: 4,
             build_on: 1,
         },
         builder: {
@@ -15,7 +15,7 @@ var temp_data = {
         },
         scout: {
             needed: 1,
-            build_on: 3,
+            build_on: 1,
         },
     },
     constructions: {},
@@ -28,12 +28,12 @@ var temp_data = {
 var spawns = _.filter(Game.spawns);
 for (var index_spawns in spawns) { 
     var spawn = spawns[index_spawns];
-    //spawn.memory.units = temp_data.units;
+    spawn.memory.units = temp_data.units;
     if (!spawn.memory.units) {
         spawn.memory = temp_data;
     }
 }
-
+var Cleaner = require('cleaner');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleScout = require('role.scout');
@@ -41,20 +41,8 @@ var roleBuilder = require('role.builder');
 require('construction.spawn');
 
 module.exports.loop = function () {
-    // Clean not existed creeps.
-    for(var name in Memory.creeps) {
-        if(!Game.creeps[name]) {
-            for(var n in roleUpgrader.sources) {
-                for (var z in roleUpgrader.sources[n]) {
-                    if (roleUpgrader.sources[n][z] == name) {
-                        delete roleUpgrader.sources[n][z];
-                    }
-                }
-            }
-            delete Memory.creeps[name];
-            console.log('Clearing non-existing creep memory:', name);
-        }
-    }
+    Cleaner.fn_clean_sources();
+    Cleaner.fn_clean_creeps();
     
     var spawns = _.filter(Game.spawns);
     for (var index_spawns in spawns) {
