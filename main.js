@@ -1,38 +1,4 @@
-var temp_data = {
-    sources: {},
-    units: {
-        harvester: {
-            needed: 4,
-            build_on: 1,
-        },
-        upgrader: {
-            needed: 4,
-            build_on: 1,
-        },
-        builder: {
-            needed: 2,
-            build_on: 1,
-        },
-        scout: {
-            needed: 1,
-            build_on: 1,
-        },
-    },
-    constructions: {},
-    settings: {
-      build_roads_on: 1,  
-    },
-};
-
-// Save settings to game memory.
-var spawns = _.filter(Game.spawns);
-for (var index_spawns in spawns) { 
-    var spawn = spawns[index_spawns];
-    spawn.memory.units = temp_data.units;
-    if (!spawn.memory.units) {
-        spawn.memory = temp_data;
-    }
-}
+var Routines = require('routines');
 var Cleaner = require('cleaner');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
@@ -43,6 +9,7 @@ require('construction.spawn');
 module.exports.loop = function () {
     Cleaner.fn_clean_sources();
     Cleaner.fn_clean_creeps();
+    Routines.fn_unit_settings_to_memory();
     
     var spawns = _.filter(Game.spawns);
     for (var index_spawns in spawns) {
@@ -54,6 +21,8 @@ module.exports.loop = function () {
         
         // Run over the spawns units and controll population.
         var harvesters = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'harvester', (room) => spawn_obj.room.name);
+        var builders = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'builder', (room) => spawn_obj.room.name);
+        //console.log(builders.length);
         // Spawn new creeps if needed,
         for (var unit in spawn_obj.memory.units) {
             var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit, (room) => spawn_obj.room.name);
@@ -127,9 +96,6 @@ function spawn_builder(spawn) {
 
 // Spawn havester.
 function spawn_harvester(spawn) {
-    // if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
-    //     spawn.createCreep(body, name);
-    // }
     var body = fn_get_worker_body(spawn);
     spawn_creep(spawn.name, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
 }
