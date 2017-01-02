@@ -38,10 +38,10 @@ var roleController = {
     },
     fn_creem_from_source: function(creep){
         if (creep.memory.tid != '') {
-            for (var n in spawn.memory.sources[creep.memory.tid]) {
-    	        if (spawn.memory.sources[creep.memory.tid][n]) {
-        	        if (spawn.memory.sources[creep.memory.tid][n] == creep.name) {
-        	            spawn.memory.sources[creep.memory.tid].splice(n, 1);
+            for (var n in creep.room.memory.sources[creep.memory.tid]) {
+    	        if (creep.room.memory.sources[creep.memory.tid][n]) {
+        	        if (creep.room.memory.sources[creep.memory.tid][n] == creep.name) {
+        	            creep.room.memory.sources[creep.memory.tid].splice(n, 1);
         	           // break;
         	        }
     	        }
@@ -52,9 +52,9 @@ var roleController = {
     },
     // Check if creep is in the given souce list.
     // Will return true if found or false.
-    check_creep_sources: function(creep_name, sid) {
-        if (spawn.memory.sources[sid]) {
-            var list = spawn.memory.sources[sid];
+    check_creep_sources: function(creep, sid) {
+        if (creep.room.memory.sources[sid]) {
+            var list = creep.room.memory.sources[sid];
             // Run over the elements and search for a name.
             for (var index in list) {
                if (list[index] == creep_name) {
@@ -67,39 +67,24 @@ var roleController = {
     interact_with_source: function(creep) {
         // If creep is having something inside of tid - he have his source.
         if (creep.memory.tid == '') {
-            // Load sources.
+            var room_name = creep.room.name;
             var found_sources = creep.room.find(FIND_SOURCES);
             var sid = '';
-            // Run over the sources and find something for our creep.
             for (var s_index in found_sources) {
                 var source = found_sources[s_index];
                 var sid = source.id;
-                // Check for a user in that source list.
-                if(this.check_creep_sources(creep.name, sid) === false) {
-                    // In this case creep is not in the list.
-                    // At first we need to check if that list even exists.
-                    if (spawn.memory.sources[sid]) {
-                        //console.log(creep.name + " bbbbb" + spawn.memory.sources[sid].length);
-                        // In this case list is exists, add creep in to it.
-                        // Also check for a creeps inside of that list.
-                        if (spawn.memory.sources[sid].length < 4) {
-                            spawn.memory.sources[sid].push(creep.name);
-                            creep.memory.tid = sid;
-                            break;
-                        }
-                    }
-                    else {
-                        // Add new sid in sources.
-                        spawn.memory.sources[sid] = new Array();
-                        // Add creep in to it.
-                        spawn.memory.sources[sid].push(creep.name);
-                        creep.memory.tid = sid;
-                        break;
-                    }
+                // Check if room is having sources in memory.
+                if (!creep.room.memory.sources) {
+                    creep.room.memory.sources = {};
                 }
-            }
-            if (creep.memory.tid == '') {
-                creep.say("Zzz...");
+                if (!creep.room.memory.sources[sid]) {
+                    creep.room.memory.sources[sid] = [];
+                }
+                if (creep.room.memory.sources[sid].length < 4) {
+                    creep.room.memory.sources[sid].push(creep.name);
+                    creep.memory.tid = sid;
+                    break;
+                }
             }
         }
         else {

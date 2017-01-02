@@ -1,61 +1,22 @@
-var temp_data = {
-    sources: {},
-    units: {
-        harvester: {
-            needed: 4,
-            build_on: 1,
-        },
-        upgrader: {
-            needed: 2,
-            build_on: 1,
-        },
-        builder: {
-            needed: 2,
-            build_on: 1,
-        },
-        scout: {
-            needed: 0,
-            build_on: 3,
-        },
-    },
-    constructions: {},
-    settings: {
-      build_roads_on: 1,  
-    },
-};
-
-// Save settings to game memory.
-var spawns = _.filter(Game.spawns);
-for (var index_spawns in spawns) { 
-    var spawn = spawns[index_spawns];
-    //spawn.memory.units = temp_data.units;
-    if (!spawn.memory.units) {
-        spawn.memory = temp_data;
-    }
-}
-
+// Basic functions.
+var Routines = require('routines');
+// Memory cleaning functions.
+var Cleaner = require('cleaner');
+// Roles.
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleScout = require('role.scout');
 var roleBuilder = require('role.builder');
-var extentions = require('extentions.module');
+// Extend spawn class.
 require('construction.spawn');
 
 module.exports.loop = function () {
-    // Clean not existed creeps.
-    for(var name in Memory.creeps) {
-        if(!Game.creeps[name]) {
-            for(var n in roleUpgrader.sources) {
-                for (var z in roleUpgrader.sources[n]) {
-                    if (roleUpgrader.sources[n][z] == name) {
-                        delete roleUpgrader.sources[n][z];
-                    }
-                }
-            }
-            delete Memory.creeps[name];
-            console.log('Clearing non-existing creep memory:', name);
-        }
-    }
+    // Clean not existed creeps from sources.
+    Cleaner.fn_clean_sources();
+    // Remove not existed creeps from game.
+    Cleaner.fn_clean_creeps();
+    // Settings to memory.
+    Routines.fn_unit_settings_to_memory();
     
     var spawns = _.filter(Game.spawns);
     for (var index_spawns in spawns) {
@@ -67,16 +28,18 @@ module.exports.loop = function () {
         
         // Run over the spawns units and controll population.
         var harvesters = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'harvester', (room) => spawn_obj.room.name);
+        var builders = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'builder', (room) => spawn_obj.room.name);
+        //console.log(builders.length);
         // Spawn new creeps if needed,
         for (var unit in spawn_obj.memory.units) {
             var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit, (room) => spawn_obj.room.name);
             var needed = spawn_obj.memory.units[unit].needed;
             var build_on = spawn_obj.memory.units[unit].build_on;
             if (harvesters.length < 3 && harvesters.length < spawn_obj.memory.units['harvester'].needed) {
-                spawn_rooter('harvester', spawn_obj.name);
+                spawn_rooter('harvester', spawn_obj);
             } else {
                 if (needed > built.length && build_on <= spawn_obj.room.controller.level) {
-                    spawn_rooter(unit, spawn_obj.name);
+                    spawn_rooter(unit, spawn_obj);
                 }
             }
         }
@@ -85,7 +48,7 @@ module.exports.loop = function () {
     // Contoll creeps.
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-        // creep.say(creep.memory.role);
+        //creep.say(creep.hits);
         if (Memory.creeps[name] == false) {
             console.log("Not legal creep, removing.");
             creep.suicide();
@@ -128,29 +91,31 @@ function spawn_rooter(uname, spawn) {
 
 // Spawn upgrader.
 function spawn_upgrader(spawn) {
-    var body = [WORK,CARRY,MOVE];
-    spawn_creep(spawn, body, undefined, {role: 'upgrader', temp_role: 'upgrader', tid: ''});
+    var body = fn_get_worker_body(spawn);
+    spawn_creep(spawn.name, body, undefined, {role: 'upgrader', temp_role: 'upgrader', tid: ''});
 }
 
 // Spawn builder.
 function spawn_builder(spawn) {
-    var body = [WORK,CARRY,MOVE];
-    spawn_creep(spawn, body, undefined, {role: 'builder', temp_role: 'builder', tid: ''});
+    var body = fn_get_worker_body(spawn);
+    spawn_creep(spawn.name, body, undefined, {role: 'builder', temp_role: 'builder', tid: ''});
 }
 
 // Spawn havester.
 function spawn_harvester(spawn) {
-    // if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
-    //     spawn.createCreep(body, name);
-    // }
-    var body = [WORK,CARRY,MOVE];
-    spawn_creep(spawn, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
+    var body = fn_get_worker_body(spawn);
+    spawn_creep(spawn.name, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
 }
 
-// Spawn havester.
+// Spawn scout.
 function spawn_scout(spawn) {
     var body = [MOVE,MOVE,MOVE];
-    spawn_creep(spawn, body, undefined, {role: 'scout', temp_role: 'scout', tid: '', data: {}});
+    spawn_creep(spawn.name, body, undefined, {
+        role: 'scout', 
+        temp_role: 'scout', 
+        tid: '', data: {},
+        room: spawn.room.name,
+    });
 }
 
 // function spawn_guard(spawn) {
@@ -166,4 +131,34 @@ function spawn_creep(spawn, body, name, options) {
         var newName = Game.spawns[spawn].createCreep(body, name, options);
         console.log('Spawning new ' + options.role + ': ' + newName);
     }
+}
+
+function fn_get_worker_body(spawn) {
+    var body = [];
+    switch (spawn.room.controller.level) {
+        case 1:
+            body = [WORK,CARRY,MOVE];
+        break;
+        case 2:
+            if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
+                body = [WORK, WORK ,WORK, CARRY, MOVE];
+            }
+            else {
+                body = [WORK,CARRY,MOVE];
+            }
+            break;
+            default:
+              if(spawn.canCreateCreep([WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], undefined) == OK) {
+                  body = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
+                }
+                else {
+                    if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
+                        body = [WORK, WORK ,WORK, CARRY, MOVE];
+                    }
+                  else {
+                        body = [WORK,CARRY,MOVE];
+                     }
+              }
+    }
+   return body;
 }
