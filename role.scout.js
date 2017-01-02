@@ -34,6 +34,28 @@ var scout = {
     },
     run: function(creep) {
         this.fn_get_avail_rooms(creep);
+        this.check_room(creep);
+    },
+    check_room: function(creep) {
+        if (creep.room.name != creep.memory.room) {
+            
+        }
+        else {
+            for (var i in creep.room.memory.connected) {
+                var connection = creep.room.memory.connected[i];
+                var tick = Game.time;
+                if (connection.visited === false || (Game.time - connection.visited) > 1000) {
+                    console.log(connection.name);
+                    var route = Game.map.findRoute(creep.room, connection.name);
+                    if(route.length > 0) {
+                        //console.log('Now heading to room '+route[0].room);
+                        var exit = creep.pos.findClosestByRange(route[0].exit);
+                        creep.moveTo(exit);
+                    }
+                    break;
+                }
+            }
+        }
     }
 }
 
