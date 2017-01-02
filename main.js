@@ -6,7 +6,7 @@ var temp_data = {
             build_on: 1,
         },
         upgrader: {
-            needed: 2,
+            needed: 3,
             build_on: 1,
         },
         builder: {
@@ -14,7 +14,7 @@ var temp_data = {
             build_on: 1,
         },
         scout: {
-            needed: 0,
+            needed: 1,
             build_on: 3,
         },
     },
@@ -38,7 +38,6 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleScout = require('role.scout');
 var roleBuilder = require('role.builder');
-var extentions = require('extentions.module');
 require('construction.spawn');
 
 module.exports.loop = function () {
@@ -85,7 +84,7 @@ module.exports.loop = function () {
     // Contoll creeps.
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-        // creep.say(creep.memory.role);
+        //creep.say(creep.hits);
         if (Memory.creeps[name] == false) {
             console.log("Not legal creep, removing.");
             creep.suicide();
