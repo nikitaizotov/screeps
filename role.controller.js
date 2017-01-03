@@ -92,9 +92,14 @@ var roleController = {
             //creep.say("I have direction");
             var source = Game.getObjectById(creep.memory.tid);
             if (source) {
-                if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source);
+                var path = creep.room.findPath(creep.pos, source.pos);
+                if (path.length > 0) {
+                    creep.moveByPath(path);
                 }
+               // console.log(path);
+                // if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                //     creep.moveTo(source);
+                // }
             }
             else {
                 if (creep.memory.tid_room && creep.room.memory.connected[creep.memory.tid_room]) {
@@ -107,6 +112,10 @@ var roleController = {
                     }
                 }
             }
+            
+            // if (creep.name = 'Jayce') {
+            //     console.log(source);
+            // }
         }
         // If target id is still empty, search in a nearest rooms.
         if (creep.memory.tid == '') { 
