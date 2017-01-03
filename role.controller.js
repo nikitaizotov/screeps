@@ -75,12 +75,6 @@ var roleController = {
                 var source = found_sources[s_index];
                 var sid = source.id;
                 // Check if room is having sources in memory.
-                if (!creep.room.memory.sources) {
-                    creep.room.memory.sources = {};
-                }
-                if (!creep.room.memory.sources[sid]) {
-                    creep.room.memory.sources[sid] = [];
-                }
                 if (creep.room.memory.sources[sid].length < 4) {
                     creep.room.memory.sources[sid].push(creep.name);
                     creep.memory.tid = sid;

@@ -11,19 +11,19 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 2,
-                build_on: 1,
-            },
-            upgrader: {
                 needed: 4,
                 build_on: 1,
             },
+            upgrader: {
+                needed: 0,
+                build_on: 1,
+            },
             builder: {
-                needed: 6,
+                needed: 4,
                 build_on: 1,
             },
             scout: {
-                needed: 1,
+                needed: 0,
                 build_on: 1,
             },
         },
