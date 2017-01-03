@@ -1,10 +1,7 @@
-//var creepPos = require('creep.positioning');
 var creepRoleController = require('role.controller');
-// var roleUpgrader = require('role.upgrader');
 var roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
-        //////////////////////////////////
         var creep = creepRoleController.checkIfHarvesterIsFree(creep);
        
         if (creep.memory.role == 'harvester') {

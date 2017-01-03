@@ -38,10 +38,11 @@ var roleController = {
     },
     fn_creem_from_source: function(creep){
         if (creep.memory.tid != '') {
-            for (var n in creep.room.memory.sources[creep.memory.tid]) {
-    	        if (creep.room.memory.sources[creep.memory.tid][n]) {
-        	        if (creep.room.memory.sources[creep.memory.tid][n] == creep.name) {
-        	            creep.room.memory.sources[creep.memory.tid].splice(n, 1);
+            var source = Game.getObjectById(creep.memory.tid);
+            for (var n in source.room.memory.sources[creep.memory.tid]) {
+    	        if (source.room.memory.sources[creep.memory.tid][n]) {
+        	        if (source.room.memory.sources[creep.memory.tid][n] == creep.name) {
+        	            source.room.memory.sources[creep.memory.tid].splice(n, 1);
         	           // break;
         	        }
     	        }
@@ -101,7 +102,7 @@ var roleController = {
         var target = this.checkCap(creep);
         if (!target) {
             console.log("Role switched to upgrader");
-            creep.memory.temp_role = 'harvester';
+            //creep.memory.temp_role = 'harvester';
             creep.memory.role = "upgrader";
             creep.memory.charging = true;
         }
