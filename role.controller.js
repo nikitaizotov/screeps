@@ -110,6 +110,11 @@ var roleController = {
                         var exit = creep.pos.findClosestByRange(route[0].exit);
                         creep.moveTo(exit);
                     }
+                    else {
+                        console.log("PAth cleaned");
+                        this.fn_creem_from_source(creep);
+                        creep.memory.tid = ''
+                    }
                 }
             }
             
