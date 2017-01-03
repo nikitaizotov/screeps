@@ -38,10 +38,11 @@ var roleController = {
     },
     fn_creem_from_source: function(creep){
         if (creep.memory.tid != '') {
-            for (var n in creep.room.memory.sources[creep.memory.tid]) {
-    	        if (creep.room.memory.sources[creep.memory.tid][n]) {
-        	        if (creep.room.memory.sources[creep.memory.tid][n] == creep.name) {
-        	            creep.room.memory.sources[creep.memory.tid].splice(n, 1);
+            var source = Game.getObjectById(creep.memory.tid);
+            for (var n in source.room.memory.sources[creep.memory.tid]) {
+    	        if (source.room.memory.sources[creep.memory.tid][n]) {
+        	        if (source.room.memory.sources[creep.memory.tid][n] == creep.name) {
+        	            source.room.memory.sources[creep.memory.tid].splice(n, 1);
         	           // break;
         	        }
     	        }
@@ -74,7 +75,7 @@ var roleController = {
                 var source = found_sources[s_index];
                 var sid = source.id;
                 // Check if room is having sources in memory.
-                if (!creep.room.memory.sources) {
+                if (!creep.room.memory.sources) {   
                     creep.room.memory.sources = {};
                 }
                 if (!creep.room.memory.sources[sid]) {
@@ -90,18 +91,54 @@ var roleController = {
         else {
             //creep.say("I have direction");
             var source = Game.getObjectById(creep.memory.tid);
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
+            if (source) {
+                if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source);
+                }
             }
+            else {
+                if (creep.memory.tid_room && creep.room.memory.connected[creep.memory.tid_room]) {
+                    var room_pos_name = creep.room.memory.connected[creep.memory.tid_room].sources_locations[creep.memory.tid].roomName;
+
+                    var route = Game.map.findRoute(creep.room.name, room_pos_name);
+                    if(route.length > 0) {
+                        var exit = creep.pos.findClosestByRange(route[0].exit);
+                        creep.moveTo(exit);
+                    }
+                }
+            }
+            creep.memory.junk = source;
         }
-        
+        // If target id is still empty, search in a nearest rooms.
+        if (creep.memory.tid == '') { 
+            var place_found = false;
+            var tid_room = '';
+            // Search for a empty place
+            for (var room_name in creep.room.memory.connected) {
+                var room = creep.room.memory.connected[room_name];
+                for (var sid in room.sources) {
+                    if (room.sources[sid].length < 4) {
+                        tid_room = room_name;
+                        room.sources[sid].push(creep.name);
+                        place_found = true;
+                        break;
+                    }
+                }
+                if (place_found == true) {
+                    break;
+                }
+            }
+            creep.memory.tid_room = room_name;
+            creep.memory.tid = sid;
+        }
+
         return creep;
     },
     checkIfHarvesterIsFree: function(creep) {
         var target = this.checkCap(creep);
         if (!target) {
-            console.log("Role switched to upgrader");
-            creep.memory.temp_role = 'harvester';
+            //console.log("Role switched to upgrader");
+            //creep.memory.temp_role = 'harvester';
             creep.memory.role = "upgrader";
             creep.memory.charging = true;
         }
@@ -112,7 +149,7 @@ var roleController = {
         var target = this.checkCap(creep);
         if (creep.carry.energy == 0) {
             if (target && creep.memory.temp_role != creep.role) {
-                console.log(creep.name + ' role switched from [' + creep.memory.temp_role + '] back to original [' + creep.memory.role + ']');
+                //console.log(creep.name + ' role switched from [' + creep.memory.temp_role + '] back to original [' + creep.memory.role + ']');
                 creep.memory.role = creep.memory.temp_role;
                 return creep;
             }

@@ -48,16 +48,19 @@ module.exports.loop = function () {
     // Contoll creeps.
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-        //creep.say(creep.hits);
+        //creep.memory.room = creep.room.name,
+        //creep.say(creep.memory.temp_role);
         if (Memory.creeps[name] == false) {
             console.log("Not legal creep, removing.");
             creep.suicide();
         }
         
         if(creep.memory.role == 'harvester') {
+            //creep.memory.room = creep.room.name;
             roleHarvester.run(creep);
         }
         if(creep.memory.role == 'upgrader') {
+            //creep.memory.room = creep.room.name;
             roleUpgrader.run(creep);
         }
         if(creep.memory.role == 'scout') {
@@ -66,6 +69,7 @@ module.exports.loop = function () {
             roleScout.run(creep);
         }
         if(creep.memory.role == 'builder') {
+            //creep.memory.room = creep.room.name;
             roleBuilder.run(creep);
         }
     }
@@ -92,19 +96,37 @@ function spawn_rooter(uname, spawn) {
 // Spawn upgrader.
 function spawn_upgrader(spawn) {
     var body = fn_get_worker_body(spawn);
-    spawn_creep(spawn.name, body, undefined, {role: 'upgrader', temp_role: 'upgrader', tid: ''});
+    var creeps_memory = {
+        role: 'upgrader', 
+        temp_role: 'upgrader', 
+        tid: '',
+        room: spawn.room.name,
+    }
+    spawn_creep(spawn.name, body, undefined, creeps_memory);
 }
 
 // Spawn builder.
 function spawn_builder(spawn) {
     var body = fn_get_worker_body(spawn);
-    spawn_creep(spawn.name, body, undefined, {role: 'builder', temp_role: 'builder', tid: ''});
+    var creeps_memory = {
+        role: 'builder', 
+        temp_role: 'builder', 
+        tid: '',
+        room: spawn.room.name,
+    }
+    spawn_creep(spawn.name, body, undefined, creeps_memory);
 }
 
 // Spawn havester.
 function spawn_harvester(spawn) {
     var body = fn_get_worker_body(spawn);
-    spawn_creep(spawn.name, body, undefined, {role: 'harvester', temp_role: 'harvester', tid: ''});
+        var creeps_memory = {
+        role: 'harvester', 
+        temp_role: 'harvester', 
+        tid: '',
+        room: spawn.room.name,
+    }
+    spawn_creep(spawn.name, body, undefined, creeps_memory);
 }
 
 // Spawn scout.
@@ -117,14 +139,6 @@ function spawn_scout(spawn) {
         room: spawn.room.name,
     });
 }
-
-// function spawn_guard(spawn) {
-//     // var body = [TOUGH, MOVE, ATTACK];
-//     // if(Game.spawns.Spawn1.canCreateCreep(body, undefined) == OK) {
-//     //     var newName = Game.spawns.Spawn1.createCreep(body, undefined, {role: 'guard'});
-//     //     console.log('Spawning new guard: ' + newName);
-//     // }
-// }
 
 function spawn_creep(spawn, body, name, options) {
     if(Game.spawns.Spawn1.canCreateCreep(body, name) == OK) {
