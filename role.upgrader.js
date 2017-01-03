@@ -15,28 +15,28 @@ var roleUpgrader = {
                 //var source = creep.pos.findClosestByPath(FIND_SOURCES);
                 creep = creepRoleController.interact_with_source(creep);
 
-    	    }
-    	    else {
+            }
+            else {
                 // if (!creep.memory.charging) {
                 //     creep.memory.charging = true;
                 // }
 
-    	        // Check if we are not full, continue charging.
-    	        if (creep.memory.charging == true && creep.carryCapacity != creep.carry.energy) {
-    	            creep = creepRoleController.interact_with_source(creep);
-    	            creepRoleController.fn_creep_move_to_source(creep);
-    	        }
-    	        // Reset flag to false, ot will say that we are charged.
-    	        if (creep.memory.charging == true && creep.carryCapacity == creep.carry.energy) {
-    	            creep.memory.charging = false;
-    	        }
-    	        
-    	        // Find upgradeController and upgrade it.
-    	        if (creep.memory.charging == false) {
-    	            creep = creepRoleController.fn_creem_from_source(creep);
-    	            creepRoleController.fn_creep_move_to_source(creep);
+                // Check if we are not full, continue charging.
+                if (creep.memory.charging == true && creep.carryCapacity != creep.carry.energy) {
+                    creep = creepRoleController.interact_with_source(creep);
+                    creepRoleController.fn_creep_move_to_source(creep);
+                }
+                // Reset flag to false, ot will say that we are charged.
+                if (creep.memory.charging == true && creep.carryCapacity == creep.carry.energy) {
+                    creep.memory.charging = false;
+                }
+                
+                // Find upgradeController and upgrade it.
+                if (creep.memory.charging == false) {
+                    creep = creepRoleController.fn_creem_from_source(creep);
+                    creepRoleController.fn_creep_move_to_source(creep);
                     if (creep.memory.room == creep.room.name) {
-            	        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(creep.room.controller);
                         }
                     }
@@ -47,10 +47,10 @@ var roleUpgrader = {
                             creep.moveTo(exit);
                         }
                     }
-    	        }
-    	    }
+                }
+            }
         }
-	}
+    }
 };
 
 module.exports = roleUpgrader;

@@ -7,48 +7,48 @@
  * mod.thing == 'a thing'; // true
  */
 
-// Save settings to game memory.
-var spawns = _.filter(Game.spawns);
-var spawn = spawns[0];
+// // Save settings to game memory.
+// var spawns = _.filter(Game.spawns);
+// var spawn = spawns[0];
 
-// Clean spurces.
-for (var sid in spawn.memory.sources) {
-    for (var n in spawn.memory.sources[sid]) {
-        var creep_name = spawn.memory.sources[sid][n];
-        var flag_found = false;
-        for(var name in Memory.creeps) {
-            if (creep_name == name) {
-                flag_found = true;
-            }
-        }
-        if (flag_found == false) {
-            delete spawn.memory.sources[sid].splice(n,1);
-        }
-    }
-}
+// // Clean spurces.
+// for (var sid in spawn.memory.sources) {
+//     for (var n in spawn.memory.sources[sid]) {
+//         var creep_name = spawn.memory.sources[sid][n];
+//         var flag_found = false;
+//         for(var name in Memory.creeps) {
+//             if (creep_name == name) {
+//                 flag_found = true;
+//             }
+//         }
+//         if (flag_found == false) {
+//             delete spawn.memory.sources[sid].splice(n,1);
+//         }
+//     }
+// }
 
 var roleController = {
     fn_creep_move_to_source: function(creep) {
-        if (creep.memory.tid) {
+        if (creep && creep.memory.tid) {
             var source = Game.getObjectById(creep.memory.tid);
             if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
         }  
     },
+    // Will not getObjectById
     fn_creem_from_source: function(creep){
-        if (creep.memory.tid != '') {
-            var source = Game.getObjectById(creep.memory.tid);
-            for (var n in source.room.memory.sources[creep.memory.tid]) {
-    	        if (source.room.memory.sources[creep.memory.tid][n]) {
-        	        if (source.room.memory.sources[creep.memory.tid][n] == creep.name) {
-        	            source.room.memory.sources[creep.memory.tid].splice(n, 1);
-        	           // break;
-        	        }
-    	        }
-    	    }
-    	    creep.memory.tid = '';
-    	}
+        console.log(creep.memory.tid + " " + creep.memory.tid_room + " " + creep.room.name);
+        var sid = creep.memory.tid;
+        base_room = Game.rooms[creep.room.name];
+        if (creep.room.name != creep.memory.tid_room) {
+            var index = base_room.memory.connected[creep.memory.tid_room].sources[sid].indexOf(creep.name);
+            base_room.memory.connected[creep.memory.tid_room].sources[sid].splice(index, 1);
+        }
+        else {
+            var index = base_room.memory.sources[sid].indexOf(creep.name);
+            base_room.memory.sources[sid].splice(index, 1);
+        }
         return creep;
     },
     // Check if creep is in the given souce list.
@@ -75,15 +75,18 @@ var roleController = {
                 var source = found_sources[s_index];
                 var sid = source.id;
                 // Check if room is having sources in memory.
-                if (!creep.room.memory.sources) {   
+                if (!creep.room.memory.sources) {
+                    console.log('New sources');
                     creep.room.memory.sources = {};
                 }
                 if (!creep.room.memory.sources[sid]) {
+                    console.log('New source');
                     creep.room.memory.sources[sid] = [];
                 }
-                if (creep.room.memory.sources[sid].length < 4) {
+                if (creep.room.memory.sources[sid].length < 3) {
                     creep.room.memory.sources[sid].push(creep.name);
                     creep.memory.tid = sid;
+                    creep.memory.tid_room = creep.room.name;
                     break;
                 }
             }
@@ -92,14 +95,9 @@ var roleController = {
             //creep.say("I have direction");
             var source = Game.getObjectById(creep.memory.tid);
             if (source) {
-                var path = creep.room.findPath(creep.pos, source.pos);
-                if (path.length > 0) {
-                    creep.moveByPath(path);
+                if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source);
                 }
-               // console.log(path);
-                // if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                //     creep.moveTo(source);
-                // }
             }
             else {
                 if (creep.memory.tid_room && creep.room.memory.connected[creep.memory.tid_room]) {
@@ -111,29 +109,30 @@ var roleController = {
                         creep.moveTo(exit);
                     }
                     else {
-                        console.log("PAth cleaned");
+                        console.log("Path cleaned");
                         this.fn_creem_from_source(creep);
                         creep.memory.tid = ''
                     }
                 }
             }
-            
-            // if (creep.name = 'Jayce') {
-            //     console.log(source);
-            // }
         }
         // If target id is still empty, search in a nearest rooms.
         if (creep.memory.tid == '') { 
             var place_found = false;
             var tid_room = '';
-            // Search for a empty place
-            for (var room_name in creep.room.memory.connected) {
-                var room = creep.room.memory.connected[room_name];
-                for (var sid in room.sources) {
-                    if (room.sources[sid].length < 4) {
-                        tid_room = room_name;
-                        room.sources[sid].push(creep.name);
+            var start_room = Game.rooms[creep.memory.room];
+            for (var room_name in start_room.memory.connected) {
+                for (var sid in start_room.memory.connected[room_name].sources) {
+                    if (start_room.memory.connected[room_name].sources[sid].length < 3) {
+                        creep.memory.tid = sid;
+                        creep.memory.tid_room = room_name;
+                        start_room.memory.connected[room_name].sources[sid].push(creep.name);
+                        start_room.memory.connected[room_name].junk = sid;
                         place_found = true;
+
+                        ////
+                        // console.log(start_room.memory.connected[room_name].sources[sid])
+                        // console.log(creep.memory.room + " " +room_name + " " + start_room.memory.connected[room_name].sources[sid][0])
                         break;
                     }
                 }
@@ -141,10 +140,7 @@ var roleController = {
                     break;
                 }
             }
-            creep.memory.tid_room = room_name;
-            creep.memory.tid = sid;
         }
-
         return creep;
     },
     checkIfHarvesterIsFree: function(creep) {

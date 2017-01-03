@@ -21,10 +21,10 @@ module.exports.loop = function () {
     var spawns = _.filter(Game.spawns);
     for (var index_spawns in spawns) {
         var spawn_obj = spawns[index_spawns];
-        spawn_obj.fn_build_roads();
-        spawn_obj.fn_build_extentions();
-        spawn_obj.fn_build_towers();
-        spawn_obj.fn_controll_towers();
+        // spawn_obj.fn_build_roads();
+        // spawn_obj.fn_build_extentions();
+        // spawn_obj.fn_build_towers();
+        // spawn_obj.fn_controll_towers();
         
         // Run over the spawns units and controll population.
         var harvesters = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'harvester', (room) => spawn_obj.room.name);
@@ -49,7 +49,7 @@ module.exports.loop = function () {
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         //creep.memory.room = creep.room.name,
-        //creep.say(creep.memory.temp_role);
+        //creep.say(creep.memory.role);
         if (Memory.creeps[name] == false) {
             console.log("Not legal creep, removing.");
             creep.suicide();
