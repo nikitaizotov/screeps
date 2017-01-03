@@ -62,6 +62,7 @@ var roleBuilder = {
 	    	}
 	    	else {
 				creep.memory.role = 'upgrader';
+				creep.memory.charging = true;
 	    	}
 	    }
 	    else {

@@ -22,7 +22,7 @@ var cleaner = {
         for (var index in rooms) {
             var room = rooms[index];
             if (room.memory.sources) {
-                for (s_indx in room.memory.sources) {
+                for (var s_indx in room.memory.sources) {
                     var source_list = room.memory.sources[s_indx];
                     for (var screep_i in source_list) {
                         var creep_name = source_list[screep_i];

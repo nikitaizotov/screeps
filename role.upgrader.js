@@ -17,6 +17,10 @@ var roleUpgrader = {
 
     	    }
     	    else {
+                // if (!creep.memory.charging) {
+                //     creep.memory.charging = true;
+                // }
+
     	        // Check if we are not full, continue charging.
     	        if (creep.memory.charging == true && creep.carryCapacity != creep.carry.energy) {
     	            creep = creepRoleController.interact_with_source(creep);
@@ -31,9 +35,18 @@ var roleUpgrader = {
     	        if (creep.memory.charging == false) {
     	            creep = creepRoleController.fn_creem_from_source(creep);
     	            creepRoleController.fn_creep_move_to_source(creep);
-        	        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(creep.room.controller);
-                  }
+                    if (creep.memory.room == creep.room.name) {
+            	        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(creep.room.controller);
+                        }
+                    }
+                    else {
+                        var route = Game.map.findRoute(creep.room, creep.memory.room);
+                        if(route.length > 0) {
+                            var exit = creep.pos.findClosestByRange(route[0].exit);
+                            creep.moveTo(exit);
+                        }
+                    }
     	        }
     	    }
         }

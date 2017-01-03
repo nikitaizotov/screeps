@@ -11,11 +11,11 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 2,
+                needed: 8,
                 build_on: 1,
             },
             upgrader: {
-                needed: 4,
+                needed: 8,
                 build_on: 1,
             },
             builder: {
@@ -42,6 +42,6 @@ var routines = {
                 spawn.memory = this.settings;
             }
         }
-    }
+    },
 }
 module.exports = routines;
