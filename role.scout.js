@@ -66,7 +66,7 @@ var scout = {
             // Update visited time.
             room.visited = Game.time;
             var start_room = Game.rooms[creep.memory.room];
-           // console.log(Game.rooms[creep.memory.room]);
+          // console.log(Game.rooms[creep.memory.room]);
             // Get back to home.
             var route = Game.map.findRoute(creep.room, creep.memory.room);
             if(route.length > 0) {
