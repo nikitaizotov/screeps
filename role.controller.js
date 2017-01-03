@@ -107,7 +107,6 @@ var roleController = {
                     }
                 }
             }
-            creep.memory.junk = source;
         }
         // If target id is still empty, search in a nearest rooms.
         if (creep.memory.tid == '') { 
