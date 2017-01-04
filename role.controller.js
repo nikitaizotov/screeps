@@ -84,6 +84,9 @@ var roleController = {
             if (creep.memory.tid == '') {
                 var flag_found = false;
                 for (var room in creep.room.memory.connected) {
+                    if (creep.room.memory.connected[room].danger != 0) {
+                        continue;
+                    }
                     for (var sid in creep.room.memory.connected[room].sources) {
                         if (creep.room.memory.connected[room].sources[sid].length < 3) {
                             creep.room.memory.connected[room].sources[sid].push(creep.name);
