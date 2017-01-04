@@ -41,8 +41,8 @@ var roleController = {
         var sid = creep.memory.tid;
         var base_room = Game.rooms[creep.memory.home_room];
         if (creep.memory.home_room != creep.memory.tid_room) {
-            // var index = base_room.memory.connected[creep.memory.tid_room].sources[sid].indexOf(creep.name);
-            // base_room.memory.connected[creep.memory.tid_room].sources[sid].splice(index, 1);
+            var index = base_room.memory.connected[creep.memory.tid_room].sources[sid].indexOf(creep.name);
+            base_room.memory.connected[creep.memory.tid_room].sources[sid].splice(index, 1);
         }
         else {
             if (base_room.memory.sources[sid]) {
@@ -71,12 +71,30 @@ var roleController = {
         // If creep is having something inside of tid - he have his source.
         if (creep.memory.tid == '') {
             for (var sid in creep.room.memory.sources) {
-                if (creep.room.memory.sources[sid].length < 3) {
+                if (creep.room.memory.sources[sid].length < 0) {
                     creep.room.memory.sources[sid].push(creep.name);
                     creep.memory.tid = sid;
                     creep.memory.tid_room = creep.room.name;
                     creep.memory.home_room = creep.room.name;
                     break;
+                }
+            }
+            if (creep.memory.tid == '') {
+                var flag_found = false;
+                for (var room in creep.room.memory.connected) {
+                    for (var sid in creep.room.memory.connected[room].sources) {
+                        if (creep.room.memory.connected[room].sources[sid].length < 3) {
+                            creep.room.memory.connected[room].sources[sid].push(creep.name);
+                            creep.memory.tid = sid;
+                            creep.memory.tid_room = room;
+                            creep.memory.home_room = creep.room.name;
+                            flag_found = true;
+                            break;
+                        }
+                    }
+                    if (flag_found == true) {
+                        break;
+                    }
                 }
             }
         }
@@ -91,7 +109,12 @@ var roleController = {
                 }
             }
             else {
-
+/////
+                var room_pos_name =  creep.memory.tid_room;
+                var route = Game.map.findRoute(creep.room.name, room_pos_name);
+                var exit = creep.pos.findClosestByRange(route[0].exit);
+                creep.moveTo(exit);
+/////
             }
             // //creep.say("I have direction");
             // var source = Game.getObjectById(creep.memory.tid);
