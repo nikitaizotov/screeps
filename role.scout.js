@@ -7,6 +7,19 @@
  * mod.thing == 'a thing'; // true
  */
 var scout = {
+    fn_create_csite: function(path, construction, creep) {
+    // Run over the path and build something on its locations.
+        for (var index in path) {
+            var item = path[index];
+            var roomPosition = creep.room.getPositionAt(item.x, item.y);
+            // If there is an empty place.
+            if (creep.room.lookForAt('structure', roomPosition).length == 0 && 
+            creep.room.lookForAt('constructionSite', roomPosition).length == 0) {
+                // Build for a structure.
+                creep.room.createConstructionSite(roomPosition, construction);
+            }
+        }
+    },
     // Function will get all neigbour rooms.
     fn_get_avail_rooms: function(creep) {
         // Get current room name.
@@ -16,9 +29,19 @@ var scout = {
         if (!creep.room.memory.connected) {
             creep.room.memory.connected = {};
         }
-        
+
         for(var room_i in current_room_connecions) {
            if (!creep.room.memory.connected[current_room_connecions[room_i]]) {
+                // Connect exits with roads.
+                if (creep.room.name == creep.memory.room) {
+                    var route = Game.map.findRoute(creep.room.name, current_room_connecions[room_i]);
+                    if(route.length > 0) {
+                        var exit = creep.pos.findClosestByRange(route[0].exit);
+                        var path = creep.room.findPath(creep.room.controller.pos, exit);
+                        this.fn_create_csite(path, STRUCTURE_ROAD, creep);
+                    }
+                }
+
                creep.room.memory.connected[current_room_connecions[room_i]] = {
                    name: current_room_connecions[room_i],
                    visited: false,
@@ -79,7 +102,7 @@ var scout = {
             for (var i in creep.room.memory.connected) {
                 var connection = creep.room.memory.connected[i];
                 var tick = Game.time;
-                if (connection.visited === false || (Game.time - connection.visited) > 500) {
+                if (connection.visited === false || (Game.time - connection.visited) > 100) {
                     //console.log(connection.name);
                     var route = Game.map.findRoute(creep.room, connection.name);
                     if(route.length > 0) {
