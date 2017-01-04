@@ -15,15 +15,15 @@ var routines = {
                 build_on: 1,
             },
             upgrader: {
-                needed: 0,
+                needed: 5,
                 build_on: 1,
             },
             builder: {
-                needed: 0,
+                needed: 3,
                 build_on: 1,
             },
             scout: {
-                needed: 0,
+                needed: 1,
                 build_on: 1,
             },
         },

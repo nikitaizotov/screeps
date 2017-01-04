@@ -8,6 +8,51 @@
  */
 var creepRoleController = require('role.controller');
 var roleBuilder = {
+	fn_builder_routines: function(creep) {
+		var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+	    if (targets.length > 0) {
+		    var flag_obj_found = false;
+		        
+		    // Search for a targets that will be a tower.
+		    for (var i in targets) {
+		        // If this is a road change flag to false and move creep to it.
+		        if (targets[i].structureType == 'road') {
+		            if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
+	                    creep.moveTo(targets[i]);
+	                    flag_obj_found = true;
+		                break;
+	                }
+		        } 
+		    }
+		        
+		    if (flag_obj_found == false) {
+	    	    // Search for a targets that will be a tower.
+	    	    for (var i in targets) {
+	                if (targets[i].structureType == 'tower') {
+	    	            // If this is a tower change flag to false and move creep to it.
+	    	            if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
+	                        creep.moveTo(targets[i]);
+	                        flag_obj_found = true;
+	    	                break;
+	                    }
+	    	        } 
+	    	    }
+		    }
+		        
+		    // If tower was found this code should be not launced.
+		    if (flag_obj_found == false) {
+	            if(targets.length) {
+	                if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+	                    creep.moveTo(targets[0]);
+	                }
+	            }
+		    }
+	    }
+	    else {
+			creep.memory.role = 'upgrader';
+			creep.memory.charging = true;
+	    }
+	},
     run: function (creep) {
         if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
@@ -20,50 +65,17 @@ var roleBuilder = {
 	    }
 
 	    if(creep.memory.building) {
-	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-	        if (targets.length > 0) {
-		        var flag_obj_found = false;
-		        
-		        // Search for a targets that will be a tower.
-		        for (var i in targets) {
-		            // If this is a road change flag to false and move creep to it.
-		            //console.log(targets[i].structureType);
-		            if (targets[i].structureType == 'road') {
-		                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
-	                        creep.moveTo(targets[i]);
-	                        flag_obj_found = true;
-		                    break;
-	                    }
-		            } 
-		        }
-		        
-		        if (flag_obj_found == false) {
-	    	        // Search for a targets that will be a tower.
-	    	        for (var i in targets) {
-	                    if (targets[i].structureType == 'tower') {
-	    	                // If this is a tower change flag to false and move creep to it.
-	    	                if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
-	                            creep.moveTo(targets[i]);
-	                            flag_obj_found = true;
-	    	                    break;
-	                        }
-	    	            } 
-	    	        }
-		        }
-		        
-		        // If tower was found this code should be not launced.
-		        if (flag_obj_found == false) {
-	                if(targets.length) {
-	                    if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-	                        creep.moveTo(targets[0]);
-	                    }
-	                }
-		        }
-	    	}
-	    	else {
-				creep.memory.role = 'upgrader';
-				creep.memory.charging = true;
-	    	}
+	    	if (creep.room.name != creep.memory.home_room) {
+                var source = Game.getObjectById(creep.memory.tid);
+                if (source) {
+                    if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(source);
+                    }
+                }
+            }
+            else {
+            	this.fn_builder_routines(creep);
+            }
 	    }
 	    else {
 	       creep = creepRoleController.interact_with_source(creep);

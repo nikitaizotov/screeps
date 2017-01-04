@@ -11,16 +11,10 @@ var roleUpgrader = {
         if (creep.memory.role == 'upgrader') {
             if(creep.carry.energy == 0) {
                 creep.memory.charging = true;
-                //var source = Game.getObjectById('5836b6588b8b9619519ee8c5');
-                //var source = creep.pos.findClosestByPath(FIND_SOURCES);
                 creep = creepRoleController.interact_with_source(creep);
 
             }
             else {
-                // if (!creep.memory.charging) {
-                //     creep.memory.charging = true;
-                // }
-
                 // Check if we are not full, continue charging.
                 if (creep.memory.charging == true && creep.carryCapacity != creep.carry.energy) {
                     creep = creepRoleController.interact_with_source(creep);
@@ -41,7 +35,7 @@ var roleUpgrader = {
                         }
                     }
                     else {
-                        var route = Game.map.findRoute(creep.room, creep.memory.room);
+                        var route = Game.map.findRoute(creep.room.name, creep.memory.room);
                         if(route.length > 0) {
                             var exit = creep.pos.findClosestByRange(route[0].exit);
                             creep.moveTo(exit);
