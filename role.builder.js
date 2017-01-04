@@ -66,12 +66,10 @@ var roleBuilder = {
 
 	    if(creep.memory.building) {
 	    	if (creep.room.name != creep.memory.home_room) {
-                var source = Game.getObjectById(creep.memory.tid);
-                if (source) {
-                    if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(source);
-                    }
-                }
+                var room_pos_name =  creep.memory.home_room;
+                var route = Game.map.findRoute(creep.room.name, room_pos_name);
+                var exit = creep.pos.findClosestByRange(route[0].exit);
+                creep.moveTo(exit);
             }
             else {
             	this.fn_builder_routines(creep);
