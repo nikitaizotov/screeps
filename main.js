@@ -48,7 +48,6 @@ module.exports.loop = function () {
     // Contoll creeps.
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-       // creep.say(creep.memory.role);
         if (Memory.creeps[name] == false) {
             console.log("Not legal creep, removing.");
             creep.suicide();
@@ -96,6 +95,8 @@ function spawn_upgrader(spawn) {
         role: 'upgrader', 
         temp_role: 'upgrader', 
         tid: '',
+        tid_room: '',
+        home_room: '',
     }
     spawn_creep(spawn.name, body, undefined, creeps_memory);
 }
@@ -107,6 +108,8 @@ function spawn_builder(spawn) {
         role: 'builder', 
         temp_role: 'builder', 
         tid: '',
+        tid_room: '',
+        home_room: '',
     }
     spawn_creep(spawn.name, body, undefined, creeps_memory);
 }
@@ -118,6 +121,8 @@ function spawn_harvester(spawn) {
         role: 'harvester', 
         temp_role: 'harvester', 
         tid: '',
+        tid_room: '',
+        home_room: '',
     }
     spawn_creep(spawn.name, body, undefined, creeps_memory);
 }

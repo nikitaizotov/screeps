@@ -11,7 +11,7 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 4,
+                needed: 5,
                 build_on: 1,
             },
             upgrader: {
@@ -19,7 +19,7 @@ var routines = {
                 build_on: 1,
             },
             builder: {
-                needed: 4,
+                needed: 0,
                 build_on: 1,
             },
             scout: {
@@ -37,11 +37,20 @@ var routines = {
         var spawns = _.filter(Game.spawns);
         for (var index_spawns in spawns) { 
             var spawn = spawns[index_spawns];
+            this.fn_remove_road_sites(spawn);
             spawn.memory.units = this.settings.units;
             if (!spawn.memory.units) {
                 spawn.memory = this.settings;
             }
         }
+    },
+    fn_remove_road_sites: function(spawn) {
+        // var csites = spawn.room.find(FIND_CONSTRUCTION_SITES);
+        // for (var csite_i in csites) {
+        //     if (csites[csite_i].structureType == 'road') {
+        //         csites[csite_i].remove();
+        //     }
+        // }
     }
 }
 module.exports = routines;

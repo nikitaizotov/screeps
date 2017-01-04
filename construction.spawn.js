@@ -137,7 +137,6 @@ Spawn.prototype.fn_build_extentions = function() {
         var flag_found = false;
         // if (roads.length > 0) {
             var road_elm = parseInt(Math.random() * (roads.length - 0) + 0);
-            console.log(roads[road_elm].pos);
             for (var y=-1; y<3; y++){
                 for (var x=-1; x<3; x++){
                     var new_x = this.fn_calculate_posible_path(roads[road_elm].pos.x - x);

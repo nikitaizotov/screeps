@@ -13,7 +13,6 @@ var scout = {
         var current_room = creep.room.name;
         // Get all availible exits from this room
         var current_room_connecions = Game.map.describeExits(current_room);
-        
         if (!creep.room.memory.connected) {
             creep.room.memory.connected = {};
         }
@@ -29,10 +28,6 @@ var scout = {
                }
            }
         }
-        
-        // Check if room is discovered already.
-        //if (Game.memory.rooms[])
-        //console.log(current_room)
     },
     run: function(creep) {
         this.fn_get_avail_rooms(creep);
@@ -40,33 +35,38 @@ var scout = {
     },
     check_room: function(creep) {
         if (creep.room.name != creep.memory.room) {
+            var room = Game.rooms[creep.memory.room].memory.connected[creep.room.name];
             // Get sources.
             var sources = creep.room.find(FIND_SOURCES);
+            if (!room.sources_locations) {
+                room.sources_locations = {};
+            }
             for (var i in sources) {
                 var sid = sources[i].id;
-                if (!creep.room.memory.sources) {
-                    creep.room.memory.sources = {};
+                if (!room.sources) {
+                    room.sources = {};
                 }
-                if (!creep.room.memory.sources[sid]) {
-                    creep.room.memory.sources[sid] = [];
+                if (!room.sources[sid]) {
+                    room.sources[sid] = [];
+                    room.sources_locations[sid] = sources[i].pos;
                 }
             }
             // Findout if room is free.
             var targetSpawn = creep.room.find(FIND_HOSTILE_SPAWNS);
             if (targetSpawn.length != 0) {
-                creep.room.memory.owner = true;
+                room.owner = true;
                 // Set danger level.
-                creep.room.memory.danger = 100;
+                room.danger = 100;
             }
             else {
-                creep.room.memory.owner = false;
+                room.owner = false;
                 // Set danger level.
-                creep.room.memory.danger = 0;
+                room.danger = 0;
             }
             // Update visited time.
-            creep.room.memory.visited = Game.time;
+            room.visited = Game.time;
             var start_room = Game.rooms[creep.memory.room];
-            start_room.memory.connected[creep.room.name].visited = Game.time;
+          // console.log(Game.rooms[creep.memory.room]);
             // Get back to home.
             var route = Game.map.findRoute(creep.room, creep.memory.room);
             if(route.length > 0) {
@@ -78,7 +78,7 @@ var scout = {
             for (var i in creep.room.memory.connected) {
                 var connection = creep.room.memory.connected[i];
                 var tick = Game.time;
-                if (connection.visited === false || (Game.time - connection.visited) > 1000) {
+                if (connection.visited === false || (Game.time - connection.visited) > 500) {
                     //console.log(connection.name);
                     var route = Game.map.findRoute(creep.room, connection.name);
                     if(route.length > 0) {

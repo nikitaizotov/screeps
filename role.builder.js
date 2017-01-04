@@ -62,11 +62,12 @@ var roleBuilder = {
 	    	}
 	    	else {
 				creep.memory.role = 'upgrader';
+				creep.memory.charging = true;
 	    	}
 	    }
 	    else {
 	       creep = creepRoleController.interact_with_source(creep);
-    	   creepRoleController.fn_creep_move_to_source(creep);
+    	   //creepRoleController.fn_creep_move_to_source(creep);
 	    }
     },
 }
