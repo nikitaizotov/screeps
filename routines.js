@@ -15,11 +15,11 @@ var routines = {
                 build_on: 1,
             },
             upgrader: {
-                needed: 8,
+                needed: 5,
                 build_on: 1,
             },
             builder: {
-                needed: 6,
+                needed: 3,
                 build_on: 1,
             },
             scout: {
@@ -45,12 +45,12 @@ var routines = {
         }
     },
     fn_remove_road_sites: function(spawn) {
-        var csites = spawn.room.find(FIND_CONSTRUCTION_SITES);
-        for (var csite_i in csites) {
-            if (csites[csite_i].structureType == 'road') {
-                csites[csite_i].remove();
-            }
-        }
+        // var csites = spawn.room.find(FIND_CONSTRUCTION_SITES);
+        // for (var csite_i in csites) {
+        //     if (csites[csite_i].structureType == 'road') {
+        //         csites[csite_i].remove();
+        //     }
+        // }
     }
 }
 module.exports = routines;

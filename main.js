@@ -21,7 +21,7 @@ module.exports.loop = function () {
     var spawns = _.filter(Game.spawns);
     for (var index_spawns in spawns) {
         var spawn_obj = spawns[index_spawns];
-        spawn_obj.fn_build_roads();
+        spawn_obj.fn_discover_room();
         spawn_obj.fn_build_extentions();
         spawn_obj.fn_build_towers();
         spawn_obj.fn_controll_towers();
@@ -48,19 +48,15 @@ module.exports.loop = function () {
     // Contoll creeps.
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-        //creep.memory.room = creep.room.name,
-        //creep.say(creep.memory.temp_role);
         if (Memory.creeps[name] == false) {
             console.log("Not legal creep, removing.");
             creep.suicide();
         }
         
         if(creep.memory.role == 'harvester') {
-            //creep.memory.room = creep.room.name;
             roleHarvester.run(creep);
         }
         if(creep.memory.role == 'upgrader') {
-            //creep.memory.room = creep.room.name;
             roleUpgrader.run(creep);
         }
         if(creep.memory.role == 'scout') {
@@ -69,7 +65,6 @@ module.exports.loop = function () {
             roleScout.run(creep);
         }
         if(creep.memory.role == 'builder') {
-            //creep.memory.room = creep.room.name;
             roleBuilder.run(creep);
         }
     }
@@ -100,7 +95,8 @@ function spawn_upgrader(spawn) {
         role: 'upgrader', 
         temp_role: 'upgrader', 
         tid: '',
-        room: spawn.room.name,
+        tid_room: '',
+        home_room: '',
     }
     spawn_creep(spawn.name, body, undefined, creeps_memory);
 }
@@ -112,7 +108,8 @@ function spawn_builder(spawn) {
         role: 'builder', 
         temp_role: 'builder', 
         tid: '',
-        room: spawn.room.name,
+        tid_room: '',
+        home_room: '',
     }
     spawn_creep(spawn.name, body, undefined, creeps_memory);
 }
@@ -124,7 +121,8 @@ function spawn_harvester(spawn) {
         role: 'harvester', 
         temp_role: 'harvester', 
         tid: '',
-        room: spawn.room.name,
+        tid_room: '',
+        home_room: '',
     }
     spawn_creep(spawn.name, body, undefined, creeps_memory);
 }
@@ -161,18 +159,18 @@ function fn_get_worker_body(spawn) {
                 body = [WORK,CARRY,MOVE];
             }
             break;
-            default:
-              if(spawn.canCreateCreep([WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], undefined) == OK) {
-                  body = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
+        default:
+            if(spawn.canCreateCreep([WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], undefined) == OK) {
+               body = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
+            }
+            else {
+                if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
+                    body = [WORK, WORK ,WORK, CARRY, MOVE];
                 }
                 else {
-                    if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
-                        body = [WORK, WORK ,WORK, CARRY, MOVE];
-                    }
-                  else {
-                        body = [WORK,CARRY,MOVE];
-                     }
-              }
+                    body = [WORK,CARRY,MOVE];
+                }
+            }
     }
    return body;
 }

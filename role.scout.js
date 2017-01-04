@@ -46,10 +46,10 @@ var scout = {
                 if (!room.sources) {
                     room.sources = {};
                 }
-                //if (!room.sources[sid]) {
+                if (!room.sources[sid]) {
                     room.sources[sid] = [];
                     room.sources_locations[sid] = sources[i].pos;
-                //}
+                }
             }
             // Findout if room is free.
             var targetSpawn = creep.room.find(FIND_HOSTILE_SPAWNS);
