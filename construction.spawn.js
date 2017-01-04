@@ -20,10 +20,33 @@ Spawn.prototype.fn_controll_towers = function() {
     }
 }
 
-Spawn.prototype.fn_build_towers = function() {
-    if (!this.room.memory.towers) {
-      this.room.memory.towers = 0;
+Spawn.prototype.fn_get_construction_loc = function() {
+    var roads = this.room.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+                return structure.structureType == STRUCTURE_ROAD;
+            }
+        });
+    var road_elm = parseInt(Math.random() * (roads.length - 0) + 0);
+    for (var y=-1; y<3; y++){
+        for (var x=-1; x<3; x++){
+            var new_x = this.fn_calculate_posible_path(roads[road_elm].pos.x - x);
+            var new_y = this.fn_calculate_posible_path(roads[road_elm].pos.y - y);
+            var roomPosition = this.room.getPositionAt(new_x, new_y);
+            if (this.room.lookForAt('structure', roomPosition).length == 0 && 
+                this.room.lookForAt('constructionSite', roomPosition).length == 0) {
+                return roomPosition;
+            }
+        }
     }
+    return false;
+}
+
+Spawn.prototype.fn_build_towers = function() {
+    var towers = this.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return structure.structureType == STRUCTURE_TOWER;
+                    }
+            });
     var avail = 0;
     switch(this.room.controller.level) {
         case 1:
@@ -45,54 +68,11 @@ Spawn.prototype.fn_build_towers = function() {
             avail = 6;
         break;
     }
-    if (this.room.memory.towers < avail) {
-        // This part should be refactored, fast solution.
-        if (this.room.controller.level == 3 || this.room.controller.level == 4) {
-            // Left top corner.
-            var new_x = this.fn_calculate_posible_path(this.pos.x - 5);
-            var new_y = this.fn_calculate_posible_path(this.pos.y - 5);
+    if (towers.length < avail) {
+        var roomPosition = this.fn_get_construction_loc();
+        if (roomPosition != false) {
+            this.room.createConstructionSite(roomPosition, STRUCTURE_TOWER);
         }
-        if (this.room.controller.level == 4 || this.room.controller.level == 5) {
-            // Right top corner.
-            var new_x = this.fn_calculate_posible_path(this.pos.x + 5);
-            var new_y = this.fn_calculate_posible_path(this.pos.y - 5);
-        }
-        if (this.room.controller.level == 7) {
-            // Right bottom corner.
-            var new_x = this.fn_calculate_posible_path(this.pos.x + 5);
-            var new_y = this.fn_calculate_posible_path(this.pos.y + 5);
-        }
-        if (this.room.controller.level == 8) {
-            // Left bottom corner.
-            var new_x = this.fn_calculate_posible_path(this.pos.x - 5);
-            var new_y = this.fn_calculate_posible_path(this.pos.y + 5);
-        }
-        
-        do {
-            for (var y = 0; y < 20; y+=1) {
-                for (var x = 0; x < 20; x+=1) {
-                    if (this.room.memory.towers < avail) {
-                        var pos_x = new_x + x;
-                        var pos_y = new_y + y;
-                        var roomPosition = this.room.getPositionAt(pos_x, pos_y);
-                        if (this.room.lookForAt('structure', roomPosition).length == 0 && 
-                            this.room.lookForAt('constructionSite', roomPosition).length == 0) {
-                                // Build for a structure.
-                                this.room.createConstructionSite(roomPosition, STRUCTURE_TOWER);
-                                this.room.memory.towers++;
-                                // var road_from = new RoomPosition(10, 25, 'sim');
-                                var sources = this.room.find(FIND_SOURCES);
-                                for (var source_i in sources) {
-                                    var source = sources[source_i];
-                                    var path = this.room.findPath(source.pos, roomPosition, {ignoreRoads: true, ignoreCreeps:true});
-                                    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-                                }
-                        }
-                    }
-                }
-            }
-        }
-        while (this.room.memory.towers < avail);
     }
 }
 
@@ -129,58 +109,11 @@ Spawn.prototype.fn_build_extentions = function() {
     }
     // REFACTOR NEEDED!!!
     if (exts_built < extensions_avail) {
-        var roads = this.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return structure.structureType == STRUCTURE_ROAD;
-                    }
-            });
-        var flag_found = false;
-        // if (roads.length > 0) {
-            var road_elm = parseInt(Math.random() * (roads.length - 0) + 0);
-            for (var y=-1; y<3; y++){
-                for (var x=-1; x<3; x++){
-                    var new_x = this.fn_calculate_posible_path(roads[road_elm].pos.x - x);
-                    var new_y = this.fn_calculate_posible_path(roads[road_elm].pos.y - y);
-                    var roomPosition = this.room.getPositionAt(new_x, new_y);
-                    if (this.room.lookForAt('structure', roomPosition).length == 0 && 
-                        this.room.lookForAt('constructionSite', roomPosition).length == 0) {
-                        this.room.createConstructionSite(roomPosition, STRUCTURE_EXTENSION);
-                        flag_found = true;
-                        break;
-                    }
-                }
-                if (flag_found == true) {
-                    break;
-                }
-            }
-        // }
+        var roomPosition = this.fn_get_construction_loc();
+        if (roomPosition != false) {
+            this.room.createConstructionSite(roomPosition, STRUCTURE_EXTENSION);
+        }
     }
-        // do {
-        //     // for (var y = 0; y < 20; y+=2) {
-        //     //     for (var x = 0; x < 20; x+=2) {
-        //     //         if (this.room.memory.extensions < extensions_avail) {
-        //     //             var pos_x = new_x + x;
-        //     //             var pos_y = new_y + y;
-        //     //             var roomPosition = this.room.getPositionAt(pos_x, pos_y);
-        //     //             if (this.room.lookForAt('structure', roomPosition).length == 0 && 
-        //     //                 this.room.lookForAt('constructionSite', roomPosition).length == 0) {
-        //     //                     // Build for a structure.
-        //     //                     this.room.createConstructionSite(roomPosition, STRUCTURE_EXTENSION);
-        //     //                     this.room.memory.extensions++;
-        //     //                     // var road_from = new RoomPosition(10, 25, 'sim');
-        //     //                     var sources = this.room.find(FIND_SOURCES);
-        //     //                     for (var source_i in sources) {
-        //     //                         var source = sources[source_i];
-        //     //                         var path = this.room.findPath(source.pos, roomPosition, {ignoreRoads: true, ignoreCreeps:true});
-        //     //                         this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-        //     //                     }
-        //     //             }
-        //     //         }
-        //     //     }
-        //     // }
-        //     this.room.memory.extensions++;
-        // }
-
 }
 
 Spawn.prototype.fn_calculate_posible_path = function(coordinates) {
