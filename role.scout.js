@@ -53,7 +53,8 @@ var scout = {
             }
             // Findout if room is free.
             var targetSpawn = creep.room.find(FIND_HOSTILE_SPAWNS);
-            if (targetSpawn.length != 0) {
+            var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+            if (targetSpawn.length != 0 && hostiles.length != 0) {
                 room.owner = true;
                 // Set danger level.
                 room.danger = 100;
