@@ -59,31 +59,6 @@ var scout = {
     check_room: function(creep) {
         if (creep.room.name != creep.memory.room) {
             var room = Game.rooms[creep.memory.room].memory.connected[creep.room.name];
-            // Get sources.
-            var sources = creep.room.find(FIND_SOURCES);
-            if (!room.sources_locations) {
-                room.sources_locations = {};
-            }
-            for (var i in sources) {
-                var sid = sources[i].id;
-                ////
-                // Source availible check.
-                var scout_home = Game.rooms[creep.memory.room];
-                var scout_home_spawns = creep.room.find(STRUCTURE_SPAWN);
-                if (scout_home_spawns > 0) {
-                    var path_to_source = creep.room.findPath(scout_home_spawns[0].pos, sources[i].pos);
-                    // Check if accessible
-                    // If yes, uodate or save data, if not - remove or not save abything.
-                }
-                ////
-                if (!room.sources) {
-                    room.sources = {};
-                }
-                if (!room.sources[sid]) {
-                    room.sources[sid] = [];
-                    room.sources_locations[sid] = sources[i].pos;
-                }
-            }
             // Findout if room is free.
             var targetSpawn = creep.room.find(FIND_HOSTILE_SPAWNS);
             var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
@@ -107,12 +82,42 @@ var scout = {
                 var exit = creep.pos.findClosestByRange(route[0].exit);
                 creep.moveTo(exit);
             }
+            ////
+            // Get sources.
+            var sources = creep.room.find(FIND_SOURCES);
+            if (!room.sources_locations) {
+                room.sources_locations = {};
+            }
+            for (var i in sources) {
+                // Source availible check.
+                var scout_home = Game.rooms[creep.memory.room];
+                var scout_home_room_ctrl = scout_home.controller;
+                var path_to_source = scout_home_room_ctrl.room.findPath(scout_home_room_ctrl.pos, sources[i].pos);
+                // Check if accessible
+                // If yes, uodate or save data, if not - remove or not save abything.
+                if (path_to_source.length == 0) {
+                    if (room.sources[sid]) {
+                        delete room.sources[sid];
+                    }
+                    continue;
+                }
+                var sid = sources[i].id;
+                if (!room.sources) {
+                    room.sources = {};
+                }
+                if (!room.sources[sid]) {
+                    // Todo:
+                    // Build road on this case
+                    room.sources[sid] = [];
+                    room.sources_locations[sid] = sources[i].pos;
+                }
+            }
         }
         else {
             for (var i in creep.room.memory.connected) {
                 var connection = creep.room.memory.connected[i];
                 var tick = Game.time;
-                if (connection.visited === false || (Game.time - connection.visited) > 100) {
+                if (connection.visited === false || (Game.time - connection.visited) > 250) {
                     //console.log(connection.name);
                     var route = Game.map.findRoute(creep.room, connection.name);
                     if(route.length > 0) {
