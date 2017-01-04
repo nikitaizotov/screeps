@@ -159,18 +159,18 @@ function fn_get_worker_body(spawn) {
                 body = [WORK,CARRY,MOVE];
             }
             break;
-            default:
-              if(spawn.canCreateCreep([WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], undefined) == OK) {
-                  body = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
+        default:
+            if(spawn.canCreateCreep([WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE], undefined) == OK) {
+               body = [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE];
+            }
+            else {
+                if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
+                    body = [WORK, WORK ,WORK, CARRY, MOVE];
                 }
                 else {
-                    if(spawn.canCreateCreep([WORK, WORK ,WORK, CARRY, MOVE], undefined) == OK) {
-                        body = [WORK, WORK ,WORK, CARRY, MOVE];
-                    }
-                  else {
-                        body = [WORK,CARRY,MOVE];
-                     }
-              }
+                    body = [WORK,CARRY,MOVE];
+                }
+            }
     }
    return body;
 }

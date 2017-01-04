@@ -11,7 +11,7 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 5,
+                needed: 8,
                 build_on: 1,
             },
             upgrader: {

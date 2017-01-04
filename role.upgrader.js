@@ -20,8 +20,10 @@ var roleUpgrader = {
                 if (creep.memory.home_room != creep.room.name) {
                     var room_pos_name =  creep.memory.home_room;
                     var route = Game.map.findRoute(creep.room.name, room_pos_name);
-                    var exit = creep.pos.findClosestByRange(route[0].exit);
-                    creep.moveTo(exit);
+                    if (route.length > 0) {
+                        var exit = creep.pos.findClosestByRange(route[0].exit);
+                        creep.moveTo(exit);
+                    }
                 }
                 else {
                     if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
