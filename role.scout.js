@@ -66,6 +66,14 @@ var scout = {
             }
             for (var i in sources) {
                 var sid = sources[i].id;
+                ////
+                // Source availible check.
+                var scout_home = Game.rooms[screep.memory.room];
+                var scout_home_spawns = creep.room.find(STRUCTURE_SPAWN);
+                if (scout_home_spawns > 0) {
+                    var path_to_source = creep.room.findPath(scout_home_spawns[0].pos, sources[i].pos);
+                }
+                ////
                 if (!room.sources) {
                     room.sources = {};
                 }
