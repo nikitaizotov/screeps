@@ -117,7 +117,7 @@ var scout = {
             for (var i in creep.room.memory.connected) {
                 var connection = creep.room.memory.connected[i];
                 var tick = Game.time;
-                if (connection.visited === false || (Game.time - connection.visited) > 25000) {
+                if (connection.visited === false || (Game.time - connection.visited) > 250) {
                     //console.log(connection.name);
                     var route = Game.map.findRoute(creep.room, connection.name);
                     if(route.length > 0) {
