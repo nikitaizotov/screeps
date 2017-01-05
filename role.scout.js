@@ -62,7 +62,7 @@ var scout = {
             // Findout if room is free.
             var targetSpawn = creep.room.find(FIND_HOSTILE_SPAWNS);
             var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
-            if (targetSpawn.length != 0 && hostiles.length != 0) {
+            if (targetSpawn.length != 0 || hostiles.length != 0) {
                 room.owner = true;
                 // Set danger level.
                 room.danger = 100;
@@ -117,7 +117,7 @@ var scout = {
             for (var i in creep.room.memory.connected) {
                 var connection = creep.room.memory.connected[i];
                 var tick = Game.time;
-                if (connection.visited === false || (Game.time - connection.visited) > 250) {
+                if (connection.visited === false || (Game.time - connection.visited) > 25000) {
                     //console.log(connection.name);
                     var route = Game.map.findRoute(creep.room, connection.name);
                     if(route.length > 0) {
