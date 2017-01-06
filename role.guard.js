@@ -9,13 +9,36 @@
 
 var roleGuard = {
     run: function(creep) {
-    //     var target = creep.pos.find(FIND_HOSTILE_CREEPS);
-    // 	if(target && creep.hits > creep.hitsMax - 500 /* no more attack */) {
-    // 		creep.moveTo(target);
-    // 		creep.attack(target);
-    // 	} else {
-    // 		creep.moveTo(Game.spawns.Spawn1);
-    // 	} 
+
+        var targets = creep.room.find(FIND_HOSTILE_CREEPS);
+    	if(targets.length > 0 && creep.hits > creep.hitsMax - 500) {
+    		var username = targets[0].owner.username;
+        	Game.notify(`User ${username} spotted in room ${creep.room.name}`);
+    		creep.moveTo(targets[0]);
+    		creep.attack(targets[0]);
+    	} else {
+    		if (creep.memory.tid == '') {
+    			console.log('new tid')
+    			var roads = creep.room.find(FIND_STRUCTURES, {
+		        filter: (structure) => {
+		                return structure.structureType == STRUCTURE_ROAD;
+		            }
+		        });
+		        var tid = roads[Math.floor((Math.random() * roads.length) + 0)].id;
+		        creep.memory.tid = tid;
+    		}
+    		else {
+    			var target = Game.getObjectById(creep.memory.tid);
+    			creep.moveTo(target);
+    			if (creep.pos.roomName == target.pos.roomName &&
+    				creep.pos.x == target.pos.x &&
+    				creep.pos.y == target.pos.y) {
+    				//console.log('fffff')
+    				creep.memory.tid = '';
+    			}
+    		}
+    		
+    	} 
     }
 }
 
