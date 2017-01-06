@@ -3,6 +3,7 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleScout = require('role.scout');
 var roleBuilder = require('role.builder');
+var roleGuard = require('role.guard');
 
 var routines = {
     settings: {
@@ -24,10 +25,10 @@ var routines = {
                 needed: 1,
                 build_on: 1,
             },
-            // defender: {
-            //     needed: 5,
-            //     build_on: 3,
-            // }
+            guard: {
+                needed: 3,
+                build_on: 3,
+            }
         },
         units_combat: {
             combat_scout: {
@@ -83,6 +84,9 @@ var routines = {
             if(creep.memory.role == 'builder') {
                 roleBuilder.run(creep);
             }
+            if(creep.memory.role == 'guard') {
+                roleGuard.run(creep);
+            }
         }
     },
     fn_check_creep_population: function() {
@@ -119,6 +123,9 @@ var routines = {
             case "builder":
                     this.spawn_builder(spawn);
                 break;
+            case "guard":
+                    this.spawn_guard(spawn);
+                break;
             case "scout":
                     this.spawn_scout(spawn);
                 break;
@@ -145,6 +152,18 @@ var routines = {
             tid: '',
             tid_room: '',
             home_room: '',
+        }
+        this.spawn_creep(spawn.name, body, undefined, creeps_memory);
+    },
+     // Spawn guard.
+    spawn_guard: function(spawn) {
+        var body = [TOUGH, MOVE, ATTACK, MOVE, ATTACK];
+        var creeps_memory = {
+            role: 'guard', 
+            temp_role: 'guard', 
+            tid: '',
+            tid_room: '',
+            home_room: spawn.room.name,
         }
         this.spawn_creep(spawn.name, body, undefined, creeps_memory);
     },
