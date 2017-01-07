@@ -23,4 +23,5 @@ module.exports.loop = function () {
     }
     Routines.fn_controll_units();
     Routines.fn_check_creep_population();
+    Routines.fn_room_spawn_combat_units();
 }

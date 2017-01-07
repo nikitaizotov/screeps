@@ -2,7 +2,16 @@ var creepRoleController = require('role.controller');
 var roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
-        var creep = creepRoleController.checkIfHarvesterIsFree(creep);
+        var targets = creep.room.find(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_EXTENSION ||
+                                    structure.structureType == STRUCTURE_SPAWN ||
+                                    structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                            }
+                        });
+        if (targets.length == 0) {
+            creep = creepRoleController.checkIfHarvesterIsFree(creep);
+        }
        
         if (creep.memory.role == 'harvester') {
             if (creep.carry.energy < creep.carryCapacity) {
@@ -17,13 +26,13 @@ var roleHarvester = {
                     creep.moveTo(exit);
                 }
                 else {
-                    var targets = creep.room.find(FIND_STRUCTURES, {
-                        filter: (structure) => {
-                            return (structure.structureType == STRUCTURE_EXTENSION ||
-                                    structure.structureType == STRUCTURE_SPAWN ||
-                                    structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
-                            }
-                        });
+                    // var targets = creep.room.find(FIND_STRUCTURES, {
+                    //     filter: (structure) => {
+                    //         return (structure.structureType == STRUCTURE_EXTENSION ||
+                    //                 structure.structureType == STRUCTURE_SPAWN ||
+                    //                 structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                    //         }
+                    //     });
                         
                     var flag_tower_found = false;
         	        

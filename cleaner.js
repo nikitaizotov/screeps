@@ -8,6 +8,9 @@
  */
 var cleaner = {
     fn_clean_creeps: function() {
+        if (!(Game.time % 10)) {
+            return;
+        }
         // Clean not existed creeps.
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
@@ -17,6 +20,9 @@ var cleaner = {
         }
     },
     fn_clean_sources: function () {
+        if (!(Game.time % 15)) {
+            return;
+        }
         var spawns = _.filter(Game.spawns);
         for (var index_spawns in spawns) {
             var room = spawns[index_spawns].room;
