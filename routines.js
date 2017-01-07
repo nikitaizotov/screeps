@@ -10,11 +10,11 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 6,
+                needed: 10,
                 build_on: 1,
             },
             upgrader: {
-                needed: 3,
+                needed: 2,
                 build_on: 1,
             },
             builder: {
@@ -41,7 +41,25 @@ var routines = {
           build_roads_on: 1,  
         },
     },
-    fn_unit_settings_to_memory: function(){
+    fn_room_spawn_combat_units: function() {
+        if (!(Game.time % 6)) {
+            return;
+        }
+        var rooms = Game.rooms;
+        for (room_name in rooms) {
+            var room = rooms[room_name];
+            var spawns = room.find(FIND_MY_STRUCTURES, {filter: (s) => s.structureType == STRUCTURE_SPAWN});
+            if (spawns.length > 0) {
+                for (var spawn_i in spawns) {
+                    var spawn = spawns[spawn_i];
+                    // for (var unit in spawn_obj.memory.units) {
+                    //     var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit, (room) => spawn_obj.room.name);
+                    // }
+                }
+            }
+        }
+    },
+    fn_unit_settings_to_memory: function() {
         // Save settings to game memory.
         var spawns = _.filter(Game.spawns);
         for (var index_spawns in spawns) { 
@@ -90,13 +108,15 @@ var routines = {
         }
     },
     fn_check_creep_population: function() {
+        if (!(Game.time % 5)) {
+            return;
+        }
         var spawns = _.filter(Game.spawns);
         for (var index_spawns in spawns) {
             var spawn_obj = spawns[index_spawns];
             // Run over the spawns units and controll population.
             var harvesters = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'harvester', (room) => spawn_obj.room.name);
             var builders = _.filter(Game.creeps, (creep) => creep.memory.temp_role == 'builder', (room) => spawn_obj.room.name);
-            //console.log(builders.length);
             // Spawn new creeps if needed,
             for (var unit in spawn_obj.memory.units) {
                 var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit, (room) => spawn_obj.room.name);

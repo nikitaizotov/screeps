@@ -9,16 +9,14 @@
 
 var roleGuard = {
     run: function(creep) {
-
         var targets = creep.room.find(FIND_HOSTILE_CREEPS);
     	if(targets.length > 0 && creep.hits > creep.hitsMax - 500) {
     		var username = targets[0].owner.username;
-        	Game.notify(`User ${username} spotted in room ${creep.room.name}`);
+        	Game.notify(`User ${username} spotted in room ${creep.room.name}`); 	
     		creep.moveTo(targets[0]);
     		creep.attack(targets[0]);
     	} else {
     		if (creep.memory.tid == '') {
-    			console.log('new tid')
     			var roads = creep.room.find(FIND_STRUCTURES, {
 		        filter: (structure) => {
 		                return structure.structureType == STRUCTURE_ROAD;
@@ -33,7 +31,6 @@ var roleGuard = {
     			if (creep.pos.roomName == target.pos.roomName &&
     				creep.pos.x == target.pos.x &&
     				creep.pos.y == target.pos.y) {
-    				//console.log('fffff')
     				creep.memory.tid = '';
     			}
     		}
