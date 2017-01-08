@@ -44,13 +44,19 @@ var roleCombatScout = {
             var host_units = creep.room.find(FIND_HOSTILE_CREEPS);
 
             if (host_spawns.length > 0 || host_units.length > 0 || host_struct.length > 0) {
+            	var waves = 0;
 	            if (!room.memory.military[creep.room.name]) {
-					room.memory.military[creep.room.name] = {
+					room.memory.military[creep.room.name] = {};
+				}
+				if (room.memory.military[creep.room.name].waves) {
+					waves = room.memory.military[creep.room.name].waves;
+				}
+				room.memory.military[creep.room.name] = {
 						units: host_units.length,
 						structures: host_struct.length,
 						spawn: host_spawns.length,
+						waves: waves,
 					};
-				}
 			}
 			else {
 				delete room.memory.military[creep.room.name];

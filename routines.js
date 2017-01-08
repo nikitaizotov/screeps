@@ -57,7 +57,6 @@ var routines = {
                         var unit_obj = spawn.memory.units_combat[unit];
                         var built = _.filter(Game.creeps, (creep) => creep.memory.role == unit, (room) => spawn.room.name);
                         if (unit_obj.needed > built && unit_obj.build_on <= spawn.room.controller.level) {
-                            //spawn_combat_scout
                             switch(unit) {
                                 case "combat_scout":
                                     this.spawn_combat_scout(spawn);
