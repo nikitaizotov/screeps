@@ -2,6 +2,7 @@
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleScout = require('role.scout');
+var roleCombatScout = require('role.combat_scout');
 var roleBuilder = require('role.builder');
 var roleGuard = require('role.guard');
 
@@ -10,15 +11,15 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 10,
+                needed: 5,
                 build_on: 1,
             },
             upgrader: {
-                needed: 2,
+                needed: 1,
                 build_on: 1,
             },
             builder: {
-                needed: 2,
+                needed: 1,
                 build_on: 1,
             },
             scout: {
@@ -52,9 +53,18 @@ var routines = {
             if (spawns.length > 0) {
                 for (var spawn_i in spawns) {
                     var spawn = spawns[spawn_i];
-                    // for (var unit in spawn_obj.memory.units) {
-                    //     var built = _.filter(Game.creeps, (creep) => creep.memory.temp_role == unit, (room) => spawn_obj.room.name);
-                    // }
+                    for (var unit in spawn.memory.units_combat) {
+                        var unit_obj = spawn.memory.units_combat[unit];
+                        var built = _.filter(Game.creeps, (creep) => creep.memory.role == unit, (room) => spawn.room.name);
+                        if (unit_obj.needed > built && unit_obj.build_on <= spawn.room.controller.level) {
+                            //spawn_combat_scout
+                            switch(unit) {
+                                case "combat_scout":
+                                    this.spawn_combat_scout(spawn);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -65,7 +75,7 @@ var routines = {
         for (var index_spawns in spawns) { 
             var spawn = spawns[index_spawns];
             this.fn_remove_road_sites(spawn);
-            spawn.memory.units = this.settings.units;
+            spawn.memory = this.settings;
             if (!spawn.memory.units) {
                 spawn.memory = this.settings;
             }
@@ -104,6 +114,9 @@ var routines = {
             }
             if(creep.memory.role == 'guard') {
                 roleGuard.run(creep);
+            }
+            if(creep.memory.role == 'combat_scout') {
+                roleCombatScout.run(creep);
             }
         }
     },
@@ -209,6 +222,15 @@ var routines = {
             temp_role: 'scout', 
             tid: '', data: {},
             room: spawn.room.name,
+        });
+    },
+
+    spawn_combat_scout: function(spawn) {
+        var body = [MOVE,MOVE,MOVE,MOVE];
+        this.spawn_creep(spawn.name, body, undefined, {
+            role: 'combat_scout', 
+            room: spawn.room.name,
+            target_room: '',
         });
     },
 
