@@ -28,7 +28,7 @@ var routines = {
                 build_on: 1,
             },
             guard: {
-                needed: 1,
+                needed: 0,
                 build_on: 3,
             }
         },
@@ -249,8 +249,34 @@ var routines = {
     },
 
     spawn_warrior: function(spawn) {
-       // var body = [TOUGH, MOVE, RANGED_ATTACK, MOVE, RANGED_ATTACK];
-        var body = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE];
+       //   var body = [TOUGH, MOVE, RANGED_ATTACK, MOVE, RANGED_ATTACK];
+        //var body = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE];
+        var body = [
+            TOUGH, 
+            TOUGH, 
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            TOUGH,
+            MOVE,
+            MOVE,
+            MOVE,
+            MOVE,
+            MOVE,
+            RANGED_ATTACK, 
+            RANGED_ATTACK, 
+            RANGED_ATTACK, 
+            RANGED_ATTACK, 
+            ];
         var creeps_memory = {
             role: 'warrior', 
             temp_role: 'warrior', 
