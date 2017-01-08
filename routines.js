@@ -226,7 +226,7 @@ var routines = {
     },
 
     spawn_combat_scout: function(spawn) {
-        var body = [MOVE,MOVE,MOVE,MOVE];
+        var body = [MOVE,MOVE,MOVE];
         this.spawn_creep(spawn.name, body, undefined, {
             role: 'combat_scout', 
             room: spawn.room.name,
