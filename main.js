@@ -10,6 +10,8 @@ module.exports.loop = function () {
     Cleaner.fn_clean_sources();
     // Remove not existed creeps from game.
     Cleaner.fn_clean_creeps();
+    // Clean parties.
+    Cleaner.fn_clean_parties();
     // Settings to memory.
     Routines.fn_unit_settings_to_memory();
     

@@ -5,13 +5,14 @@ var roleScout = require('role.scout');
 var roleCombatScout = require('role.combat_scout');
 var roleBuilder = require('role.builder');
 var roleGuard = require('role.guard');
+var roleWarrior = require('role.warrior');
 
 var routines = {
     settings: {
         sources: {},
         units: {
             harvester: {
-                needed: 5,
+                needed: 8,
                 build_on: 1,
             },
             upgrader: {
@@ -34,6 +35,10 @@ var routines = {
         units_combat: {
             combat_scout: {
                 needed: 1,
+                build_on: 3,
+            },
+            warrior: {
+                needed: 5,
                 build_on: 3,
             },
         },
@@ -60,6 +65,9 @@ var routines = {
                             switch(unit) {
                                 case "combat_scout":
                                     this.spawn_combat_scout(spawn);
+                                break;
+                                case "warrior":
+                                    this.spawn_warrior(spawn);
                                 break;
                             }
                         }
@@ -117,6 +125,9 @@ var routines = {
             if(creep.memory.role == 'combat_scout') {
                 roleCombatScout.run(creep);
             }
+            if(creep.memory.role == 'warrior') {
+                roleWarrior.run(creep);
+            }
         }
     },
     fn_check_creep_population: function() {
@@ -160,6 +171,9 @@ var routines = {
                 break;
             case "scout":
                     this.spawn_scout(spawn);
+                break;
+            case "warrior":
+                    this.spawn_warrior(spawn);
                 break;
         }
     },
@@ -231,6 +245,19 @@ var routines = {
             room: spawn.room.name,
             target_room: '',
         });
+    },
+
+    spawn_warrior: function(spawn) {
+        var body = [TOUGH, MOVE, ATTACK, MOVE, ATTACK];
+        var creeps_memory = {
+            role: 'warrior', 
+            temp_role: 'warrior', 
+            tid: '',
+            tid_room: '',
+            party: '',
+            room: spawn.room.name,
+        }
+        this.spawn_creep(spawn.name, body, undefined, creeps_memory);
     },
 
     spawn_creep: function(spawn, body, name, options) {
