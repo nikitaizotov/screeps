@@ -1,3 +1,4 @@
+var creepFunctions = require('role.functions');
 /*
  * Memory:
  *	creep.memory.room
@@ -34,27 +35,7 @@ var roleCombatScout = {
     },
     fn_collect_info: function(creep) {
     	if (creep.room.name != creep.memory.room) {
-			var room = Game.rooms[creep.memory.room];
-			if (!room.memory.military) {
-				room.memory.military = {};
-			}
-			
-			var host_spawns = creep.room.find(FIND_HOSTILE_SPAWNS);
-			var host_struct = creep.room.find(FIND_HOSTILE_STRUCTURES);
-            var host_units = creep.room.find(FIND_HOSTILE_CREEPS);
-
-            if (host_spawns.length > 0 || host_units.length > 0 || host_struct.length > 0) {
-	            if (!room.memory.military[creep.room.name]) {
-					room.memory.military[creep.room.name] = {
-						units: host_units.length,
-						structures: host_struct.length,
-						spawn: host_spawns.length,
-					};
-				}
-			}
-			else {
-				delete room.memory.military[creep.room.name];
-			}
+			creepFunctions.fn_save_rooms_data(creep);
 		}
     },
 }

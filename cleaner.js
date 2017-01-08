@@ -19,6 +19,30 @@ var cleaner = {
             }
         }
     },
+    fn_clean_parties: function() {
+        if (!(Game.time % 30)) {
+            return;
+        }
+        for (var room_name in Game.rooms) {
+            var room = Game.rooms[room_name];
+            if (room.memory.party) {
+                for(var party_name in room.memory.party) {
+                    // Run over the units.
+                    for (var unit_name in room.memory.party[party_name].units) {
+                        if(!Game.creeps[unit_name]) {
+                            delete room.memory.party[party_name].units[unit_name];
+                            console.log('Removing unexisted creep ' + unit_name + ' from a party ' + party_name +' in ' + room.name);
+                        }
+                    }
+                    // Delete closed party if empty.
+                    if (Object.keys(room.memory.party[party_name].units).length == 0 && room.memory.party[party_name].status == 'closed') {
+                        delete room.memory.party[party_name];
+                        console.log('Removing empty closed party ' + party_name +' in ' + room.name)
+                    }
+                }
+            }
+        }
+    },
     fn_clean_sources: function () {
         if (!(Game.time % 15)) {
             return;

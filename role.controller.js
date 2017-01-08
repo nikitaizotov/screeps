@@ -73,7 +73,7 @@ var roleController = {
         // If creep is having something inside of tid - he have his source.
         if (creep.memory.tid == '') {
             for (var sid in creep.room.memory.sources) {
-                if (creep.room.memory.sources[sid].length < 4) {
+                if (creep.room.memory.sources[sid].length < 3) {
                     creep.room.memory.sources[sid].push(creep.name);
                     creep.memory.tid = sid;
                     creep.memory.tid_room = creep.room.name;
@@ -122,11 +122,9 @@ var roleController = {
         }
         return creep;
     },
-    checkIfHarvesterIsFree: function(creep) {
-        var target = this.checkCap(creep);
-        if (!target) {
-            //console.log("Role switched to upgrader");
-            //creep.memory.temp_role = 'harvester';
+    checkIfHarvesterIsFree: function(creep, targets) {
+        if (targets.length == 0) {
+            console.log('Role switched to upgrader for ' + creep.name);
             creep.memory.role = "upgrader";
             creep.memory.charging = true;
         }
