@@ -10,6 +10,9 @@ var creepRoleController = require('role.controller');
 var roleBuilder = {
 	fn_builder_routines: function(creep) {
 		var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+		if (creep.memory.tid != '') {
+			creep.memory.tid = '';
+		}
 	    if (targets.length > 0) {
 		    var flag_obj_found = false;
 		        
@@ -42,8 +45,9 @@ var roleBuilder = {
 		    // If tower was found this code should be not launced.
 		    if (flag_obj_found == false) {
 	            if(targets.length) {
-	                if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-	                    creep.moveTo(targets[0]);
+	            	var closest = creep.pos.findClosestByPath(targets);
+	                if(creep.build(closest) == ERR_NOT_IN_RANGE) {
+	                    creep.moveTo(closest);
 	                }
 	            }
 		    }

@@ -12,7 +12,7 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 8,
+                needed: 24,
                 build_on: 1,
             },
             upgrader: {
@@ -28,7 +28,7 @@ var routines = {
                 build_on: 1,
             },
             guard: {
-                needed: 3,
+                needed: 1,
                 build_on: 3,
             }
         },
@@ -117,6 +117,7 @@ var routines = {
                 roleScout.run(creep);
             }
             if(creep.memory.role == 'builder') {
+                creep.say('Debuilder')
                 roleBuilder.run(creep);
             }
             if(creep.memory.role == 'guard') {
