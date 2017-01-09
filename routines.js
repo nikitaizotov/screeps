@@ -12,7 +12,7 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 24,
+                needed: 20,
                 build_on: 1,
             },
             upgrader: {
@@ -38,7 +38,7 @@ var routines = {
                 build_on: 3,
             },
             warrior: {
-                needed: 5,
+                needed: 15,
                 build_on: 3,
             },
         },
@@ -61,7 +61,7 @@ var routines = {
                     for (var unit in spawn.memory.units_combat) {
                         var unit_obj = spawn.memory.units_combat[unit];
                         var built = _.filter(Game.creeps, (creep) => creep.memory.role == unit, (room) => spawn.room.name);
-                        if (unit_obj.needed > built && unit_obj.build_on <= spawn.room.controller.level) {
+                        if (unit_obj.needed > built.length && unit_obj.build_on <= spawn.room.controller.level) {
                             switch(unit) {
                                 case "combat_scout":
                                     this.spawn_combat_scout(spawn);
@@ -249,7 +249,8 @@ var routines = {
     },
 
     spawn_warrior: function(spawn) {
-        var body = [TOUGH, MOVE, ATTACK, MOVE, ATTACK];
+       // var body = [TOUGH, MOVE, RANGED_ATTACK, MOVE, RANGED_ATTACK];
+        var body = [RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE];
         var creeps_memory = {
             role: 'warrior', 
             temp_role: 'warrior', 
