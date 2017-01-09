@@ -28,7 +28,7 @@ var routines = {
                 build_on: 1,
             },
             guard: {
-                needed: 1,
+                needed: 0,
                 build_on: 3,
             }
         },

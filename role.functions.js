@@ -66,7 +66,7 @@ var functions = {
 			if (party.status == 'open') {
 				room.memory.party[p_name].units[creep.name] = Game.time;
 				creep.memory.party = p_name;
-				if (Object.keys(room.memory.party[p_name].units).length > 4) {
+				if (Object.keys(room.memory.party[p_name].units).length > 3) {
 					room.memory.party[p_name].status = 'closed';
 				}
 				break;
