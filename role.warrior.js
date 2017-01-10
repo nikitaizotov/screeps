@@ -23,7 +23,7 @@ var WarriorRole = {
     		if (creep.room.name != creep.memory.room && creep.memory.party == '') {
 				var room_pos_name =  creep.memory.party;
                 var route = Game.map.findRoute(creep.room.name, creep.memory.room);
-                var exit = creep.pos.findClosestByRange(route[0].exit);
+                var exit = creep.pos.findClosestByPath(route[0].exit);
                 creep.moveTo(exit);
                 return;
 			}
@@ -44,7 +44,7 @@ var WarriorRole = {
 					}
 					var room_pos_name =  creep.memory.party;
                     var route = Game.map.findRoute(creep.room.name, room_pos_name);
-                    var exit = creep.pos.findClosestByRange(route[0].exit);
+                    var exit = creep.pos.findClosestByPath(route[0].exit);
                     creep.moveTo(exit);
 				}
 				else {

@@ -21,7 +21,7 @@ var roleCombatScout = {
     	}
     	else {
     		var route = Game.map.findRoute(creep.room.name, creep.memory.target_room);
-            var exit = creep.pos.findClosestByRange(route[0].exit);
+            var exit = creep.pos.findClosestByPath(route[0].exit);
             creep.moveTo(exit);
     	}
     },

@@ -149,26 +149,28 @@ Spawn.prototype.fn_discover_room = function() {
             this.fn_create_construction_sites(path, STRUCTURE_ROAD);
         }
     }
-    // Order to build walls
-    if (this.room.controller.level > 0) {
-        if (!this.room.memory.walls) {
-            var upper_wall = [];
-            var errors = 0;
-            for (var x = 2; x < 48; x++) {
-                var built_roomPosition = this.room.getPositionAt(x, 2);
-                errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
-                var built_roomPosition = this.room.getPositionAt(2, x);
-                errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
-                var built_roomPosition = this.room.getPositionAt(x, 47);
-                errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
-                var built_roomPosition = this.room.getPositionAt(47, x);
-                errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
-            }
-            if (errors == 0) {
-                this.room.memory.walls = true;
-            }
-        }
-    }
+    // // Order to build walls
+    // if (this.room.controller.level > 0) {
+    //     if (!this.room.memory.walls) {
+    //         var upper_wall = [];
+    //         var errors = 0;
+    //         for (var x = 2; x < 48; x++) {
+    //             var built_roomPosition = this.room.getPositionAt(x, 2);
+    //             var a = this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+    //             errors += a;
+    //             console.log(a);
+    //             var built_roomPosition = this.room.getPositionAt(2, x);
+    //             errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+    //             var built_roomPosition = this.room.getPositionAt(x, 47);
+    //             errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+    //             var built_roomPosition = this.room.getPositionAt(47, x);
+    //             errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+    //         }
+    //         if (errors == 0) {
+    //             this.room.memory.walls = true;
+    //         }
+    //     }
+    // }
 }
 
 // This function will build roads and connects all structures in the room.

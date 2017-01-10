@@ -16,7 +16,7 @@ var routines = {
                 build_on: 1,
             },
             upgrader: {
-                needed: 1,
+                needed: 4,
                 build_on: 1,
             },
             builder: {
@@ -27,10 +27,10 @@ var routines = {
                 needed: 1,
                 build_on: 1,
             },
-            guard: {
-                needed: 0,
-                build_on: 3,
-            }
+            // guard: {
+            //     needed: 0,
+            //     build_on: 3,
+            // }
         },
         units_combat: {
             combat_scout: {
@@ -39,7 +39,7 @@ var routines = {
             },
             warrior: {
                 needed: 15,
-                build_on: 3,
+                build_on: 4,
             },
         },
         constructions: {},
@@ -262,20 +262,21 @@ var routines = {
             TOUGH,
             TOUGH,
             TOUGH,
-            TOUGH,
-            TOUGH,
-            TOUGH,
-            TOUGH,
-            TOUGH,
+            // TOUGH,
+            // TOUGH,
+            // TOUGH,
+            // TOUGH,
+            // TOUGH,
+            // MOVE,
             MOVE,
             MOVE,
             MOVE,
             MOVE,
-            MOVE,
+            MOVE, // Added
             RANGED_ATTACK, 
             RANGED_ATTACK, 
-            RANGED_ATTACK, 
-            RANGED_ATTACK, 
+            // RANGED_ATTACK, 
+            // RANGED_ATTACK, 
             ];
         var creeps_memory = {
             role: 'warrior', 

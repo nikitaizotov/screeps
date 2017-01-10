@@ -20,7 +20,7 @@ var roleHarvester = {
                 if (creep.room.name != creep.memory.home_room) {
                     var room_pos_name =  creep.memory.home_room;
                     var route = Game.map.findRoute(creep.room.name, room_pos_name);
-                    var exit = creep.pos.findClosestByRange(route[0].exit);
+                    var exit = creep.pos.findClosestByPath(route[0].exit);
                     creep.moveTo(exit);
                 }
                 else {

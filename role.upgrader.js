@@ -21,7 +21,7 @@ var roleUpgrader = {
                     var room_pos_name =  creep.memory.home_room;
                     var route = Game.map.findRoute(creep.room.name, room_pos_name);
                     if (route.length > 0) {
-                        var exit = creep.pos.findClosestByRange(route[0].exit);
+                        var exit = creep.pos.findClosestByPath(route[0].exit);
                         creep.moveTo(exit);
                     }
                 }

@@ -36,7 +36,7 @@ var scout = {
                 if (creep.room.name == creep.memory.room) {
                     var route = Game.map.findRoute(creep.room.name, current_room_connecions[room_i]);
                     if(route.length > 0) {
-                        var exit = creep.pos.findClosestByRange(route[0].exit);
+                        var exit = creep.pos.findClosestByPath(route[0].exit);
                         var path = creep.room.findPath(creep.room.controller.pos, exit);
                         this.fn_create_csite(path, STRUCTURE_ROAD, creep);
                     }
@@ -76,12 +76,7 @@ var scout = {
             room.visited = Game.time;
             var start_room = Game.rooms[creep.memory.room];
           // console.log(Game.rooms[creep.memory.room]);
-            // Get back to home.
-            var route = Game.map.findRoute(creep.room, creep.memory.room);
-            if(route.length > 0) {
-                var exit = creep.pos.findClosestByRange(route[0].exit);
-                creep.moveTo(exit);
-            }
+            
             ////
             // Get sources.
             var sources = creep.room.find(FIND_SOURCES);
@@ -108,9 +103,17 @@ var scout = {
                 if (!room.sources[sid]) {
                     // Todo:
                     // Build road on this case
+                    // var road = Game.getObjectById(sid);
+                    // this.fn_create_csite(road, STRUCTURE_ROAD, creep);
                     room.sources[sid] = [];
                     room.sources_locations[sid] = sources[i].pos;
                 }
+            }
+            // Get back to home.
+            var route = Game.map.findRoute(creep.room, creep.memory.room);
+            if(route.length > 0) {
+                var exit = creep.pos.findClosestByPath(route[0].exit);
+                creep.moveTo(exit);
             }
         }
         else {
@@ -122,7 +125,7 @@ var scout = {
                     var route = Game.map.findRoute(creep.room, connection.name);
                     if(route.length > 0) {
                         //console.log('Now heading to room '+route[0].room);
-                        var exit = creep.pos.findClosestByRange(route[0].exit);
+                        var exit = creep.pos.findClosestByPath(route[0].exit);
                         creep.moveTo(exit);
                     }
                     break;
