@@ -1,4 +1,53 @@
-Spawn.prototype.fn_controll_towers = function() {
+Spawn.prototype.fn_build_walls = function() {
+    if (!this.room.memory.walls) {
+        var objects = [];
+        for (var y = 2; y < 47; y++) {
+           for (var x = 2; x < 47; x++) {
+                var obj = this.room.lookAt(x,y);
+                switch(obj[0].type) {
+                    case 'source':
+                    case 'structure':
+                        objects.push([x, y]);
+                    break;
+                }
+            }
+        }
+    }
+    var roads = [];
+    for (var i = 0; i < objects.length; i++) {
+        var p1 = this.room.getPositionAt(objects[i][0], objects[i][1]);
+        if (i == 0) {
+            roads.push([p1, p1]);
+        }
+        else {
+            var left = roads[roads.length-1][0];
+            var right = roads[roads.length-1][1];
+            if (p1.x < left.x) {
+           
+                roads.push([p1, right]);
+                var path = this.room.findPath(p1, left, {ignoreRoads: true, ignoreCreeps:true});
+                this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+            }
+            else {
+                roads.push([left, p1]);
+                var path = this.room.findPath(p1, right, {ignoreRoads: true, ignoreCreeps:true});
+                this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+            } 
+        }
+    }
+    var path = this.room.findPath(roads[roads.length-1][0], roads[roads.length-1][1], {ignoreRoads: true, ignoreCreeps:true});
+    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+    // var csites = this.room.find(FIND_CONSTRUCTION_SITES);
+    //     for (var csite_i in csites) {
+    //         if (csites[csite_i].structureType == 'road') {
+    //             csites[csite_i].remove();
+    //         }
+    //     }
+    Memory.junk = objects;
+    //console.log(objects);
+}
+
+Spawn.prototype.fn_controll_towers = function() {  
     var towers = this.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return structure.structureType == STRUCTURE_TOWER;
