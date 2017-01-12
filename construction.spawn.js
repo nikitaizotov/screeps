@@ -1,5 +1,7 @@
 Spawn.prototype.fn_build_walls = function() {
+    // Collect all objects in to array.
     if (!this.room.memory.walls) {
+        var errors = false;
         var objects = [];
         for (var y = 2; y < 47; y++) {
            for (var x = 2; x < 47; x++) {
@@ -7,44 +9,70 @@ Spawn.prototype.fn_build_walls = function() {
                 switch(obj[0].type) {
                     case 'source':
                     case 'structure':
+                    case 'mineral':
                         objects.push([x, y]);
                     break;
                 }
             }
         }
-    }
-    var roads = [];
-    for (var i = 0; i < objects.length; i++) {
-        var p1 = this.room.getPositionAt(objects[i][0], objects[i][1]);
-        if (i == 0) {
-            roads.push([p1, p1]);
-        }
-        else {
-            var left = roads[roads.length-1][0];
-            var right = roads[roads.length-1][1];
-            if (p1.x < left.x) {
-           
-                roads.push([p1, right]);
-                var path = this.room.findPath(p1, left, {ignoreRoads: true, ignoreCreeps:true});
-                this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+    
+        var roads = [];
+        for (var i = 0; i < objects.length; i++) {
+            var p1 = this.room.getPositionAt(objects[i][0], objects[i][1]);
+            if (i == 0) {
+                // Top.
+                roads.push([p1, p1]);
             }
             else {
-                roads.push([left, p1]);
-                var path = this.room.findPath(p1, right, {ignoreRoads: true, ignoreCreeps:true});
-                this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-            } 
+                var left = roads[roads.length-1][0];
+                var right = roads[roads.length-1][1];
+                if (p1.x < left.x) {
+                    // Left wall
+                    roads.push([p1, right]);
+                    var path = this.room.findPath(p1, left, {ignoreRoads: true, ignoreCreeps:true});
+                    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+                }
+                else {
+                    // Right wall
+                    roads.push([left, p1]);
+                    var path = this.room.findPath(p1, right, {ignoreRoads: true, ignoreCreeps:true});
+                    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+                } 
+                if (errors == false) {
+                    errors = this.fn_check_csites(path);
+                }
+            }
+        }
+        // Connect bottom.
+        var path = this.room.findPath(roads[roads.length-1][0], roads[roads.length-1][1], {ignoreRoads: true, ignoreCreeps:true});
+        Memory.junk = path;
+        this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+        if (errors == false) {
+            errors = this.fn_check_csites(path);
+        }
+        if (errors == false) {
+            this.room.memory.walls = true;
+        }
+        // var csites = this.room.find(FIND_CONSTRUCTION_SITES);
+        //     for (var csite_i in csites) {
+        //         if (csites[csite_i].structureType == 'road') {
+        //             csites[csite_i].remove();
+        //         }
+        //     }
+       // Memory.junk = objects;
+        //console.log(objects);
+    }
+}
+
+Spawn.prototype.fn_check_csites = function(path) {
+    var errors = false;
+    for (var i in path) {
+        var what = this.room.lookAt(path[i].x, path[i].y);
+        if (what[0].type != 'constructionSite' && what[0].type != 'source' && what[0].type != 'structure') {
+            return true;
         }
     }
-    var path = this.room.findPath(roads[roads.length-1][0], roads[roads.length-1][1], {ignoreRoads: true, ignoreCreeps:true});
-    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-    // var csites = this.room.find(FIND_CONSTRUCTION_SITES);
-    //     for (var csite_i in csites) {
-    //         if (csites[csite_i].structureType == 'road') {
-    //             csites[csite_i].remove();
-    //         }
-    //     }
-    Memory.junk = objects;
-    //console.log(objects);
+    return errors;
 }
 
 Spawn.prototype.fn_controll_towers = function() {  
