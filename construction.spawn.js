@@ -26,7 +26,7 @@ Spawn.prototype.fn_build_walls = function() {
             else {
                 var left = roads[roads.length-1][0];
                 var right = roads[roads.length-1][1];
-                if (p1.x < left.x) {
+                if (p1.x <= left.x) {
                     // Left wall
                     roads.push([p1, right]);
                     var path = this.room.findPath(p1, left, {ignoreRoads: true, ignoreCreeps:true});
