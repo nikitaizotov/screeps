@@ -16,17 +16,17 @@ var roleBuilder = {
 	    if (targets.length > 0) {
 		    var flag_obj_found = false;
 		        
-		    // Search for a targets that will be a tower.
-		    for (var i in targets) {
-		        // If this is a road change flag to false and move creep to it.
-		        if (targets[i].structureType == 'road') {
-		            if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
-	                    creep.moveTo(targets[i]);
-	                    flag_obj_found = true;
-		                break;
-	                }
-		        } 
-		    }
+		    //// Search for a targets that will be a tower.
+		    //for (var i in targets) {
+		    //    // If this is a road change flag to false and move creep to it.
+		    //    if (targets[i].structureType == 'road') {
+		    //        if(creep.build(targets[i]) == ERR_NOT_IN_RANGE) {
+	         //           creep.moveTo(targets[i]);
+	         //           flag_obj_found = true;
+		    //            break;
+	         //       }
+		    //    }
+		    //}
 		        
 		    if (flag_obj_found == false) {
 	    	    // Search for a targets that will be a tower.

@@ -37,20 +37,11 @@ var roleController = {
         }  
     },
     // Will not getObjectById
-    fn_creem_from_source: function(creep){
+    fn_creem_from_source: function(creep) {
         var sid = creep.memory.tid;
-        var base_room = Game.rooms[creep.memory.home_room];
-        if (creep.memory.home_room != creep.memory.tid_room) {
-            if (base_room.memory.connected[creep.memory.tid_room].sources[sid]) {
-                var index = base_room.memory.connected[creep.memory.tid_room].sources[sid].indexOf(creep.name);
-                base_room.memory.connected[creep.memory.tid_room].sources[sid].splice(index, 1);
-            }
-        }
-        else {
-            if (base_room.memory.sources[sid]) {
-                var index = base_room.memory.sources[sid].indexOf(creep.name);
-                base_room.memory.sources[sid].splice(index, 1);
-            }
+        if (Memory.logistics.sources[sid]) {
+            var index = Memory.logistics.sources[sid].indexOf(creep.name);
+            Memory.logistics.sources[sid].splice(index, 1);
         }
         creep.memory.tid = '';
         return creep;
@@ -72,36 +63,36 @@ var roleController = {
     interact_with_source: function(creep) {
         // If creep is having something inside of tid - he have his source.
         if (creep.memory.tid == '') {
-            for (var sid in creep.room.memory.sources) {
-                if (creep.room.memory.sources[sid].length < 3) {
-                    creep.room.memory.sources[sid].push(creep.name);
+            for (var sid in Memory.logistics.rooms[creep.room.name].sources) {
+                if (Memory.logistics.sources[sid].length < 3) {
+                    Memory.logistics.sources[sid].push(creep.name);
                     creep.memory.tid = sid;
                     creep.memory.tid_room = creep.room.name;
                     creep.memory.home_room = creep.room.name;
                     break;
                 }
             }
-            if (creep.memory.tid == '') {
-                var flag_found = false;
-                for (var room in creep.room.memory.connected) {
-                    if (creep.room.memory.connected[room].danger != 0) {
-                        continue;
-                    }
-                    for (var sid in creep.room.memory.connected[room].sources) {
-                        if (creep.room.memory.connected[room].sources[sid].length < 3) {
-                            creep.room.memory.connected[room].sources[sid].push(creep.name);
-                            creep.memory.tid = sid;
-                            creep.memory.tid_room = room;
-                            creep.memory.home_room = creep.room.name;
-                            flag_found = true;
-                            break;
-                        }
-                    }
-                    if (flag_found == true) {
-                        break;
-                    }
-                }
-            }
+            //if (creep.memory.tid == '') {
+            //    var flag_found = false;
+            //    for (var room in creep.room.memory.connected) {
+            //        if (creep.room.memory.connected[room].danger != 0) {
+            //            continue;
+            //        }
+            //        for (var sid in creep.room.memory.connected[room].sources) {
+            //            if (creep.room.memory.connected[room].sources[sid].length < 1) {
+            //                creep.room.memory.connected[room].sources[sid].push(creep.name);
+            //                creep.memory.tid = sid;
+            //                creep.memory.tid_room = room;
+            //                creep.memory.home_room = creep.room.name;
+            //                flag_found = true;
+            //                break;
+            //            }
+            //        }
+            //        if (flag_found == true) {
+            //            break;
+            //        }
+            //    }
+            //}
         }
         else {
             // Move to source.
@@ -113,12 +104,18 @@ var roleController = {
                     }
                 }
             }
-            else {
-                var room_pos_name =  creep.memory.tid_room;
-                var route = Game.map.findRoute(creep.room.name, room_pos_name);
-                var exit = creep.pos.findClosestByRange(route[0].exit);
-                creep.moveTo(exit);
-            }
+            //else {
+            //    ///creep.memory.
+            //    //var end_room_pos = new RoomPosition(10, 25, 'sim');
+            //    ////////////////
+            //    var home_room
+            //    var end_room_pos = new RoomPosition(10, 25, 'sim');
+            //    /////////
+            //    //var room_pos_name =  creep.memory.tid_room;
+            //    //var route = Game.map.findRoute(creep.room.name, room_pos_name);
+            //    //var exit = creep.pos.findClosestByRange(route[0].exit);
+            //    //creep.moveTo(exit);
+            //}
         }
         return creep;
     },
