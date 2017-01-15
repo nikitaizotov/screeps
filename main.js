@@ -20,8 +20,8 @@ module.exports.loop = function () {
         var spawn_obj = spawns[index_spawns];
          spawn_obj.fn_discover_room();
         // spawn_obj.fn_build_extentions();
-        // spawn_obj.fn_build_towers();
-        // spawn_obj.fn_controll_towers();
+        spawn_obj.fn_build_towers();
+        spawn_obj.fn_controll_towers();
         spawn_obj.fn_build_walls_and_roads();
     }
      Routines.fn_controll_units();
