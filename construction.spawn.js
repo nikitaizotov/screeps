@@ -1,4 +1,7 @@
-Spawn.prototype.fn_build_walls = function() {
+Spawn.prototype.fn_build_walls_and_roads = function() {
+    if (Game.time % 1) {
+        return;
+    }
     // Collect all objects in to array.
     if (!this.room.memory.walls) {
         var errors = false;
@@ -27,13 +30,13 @@ Spawn.prototype.fn_build_walls = function() {
                 var left = roads[roads.length-1][0];
                 var right = roads[roads.length-1][1];
                 if (p1.x <= left.x) {
-                    // Left wall
+                    // Left
                     roads.push([p1, right]);
                     var path = this.room.findPath(p1, left, {ignoreRoads: true, ignoreCreeps:true});
                     this.fn_create_construction_sites(path, STRUCTURE_ROAD);
                 }
                 else {
-                    // Right wall
+                    // Right
                     roads.push([left, p1]);
                     var path = this.room.findPath(p1, right, {ignoreRoads: true, ignoreCreeps:true});
                     this.fn_create_construction_sites(path, STRUCTURE_ROAD);
@@ -62,6 +65,110 @@ Spawn.prototype.fn_build_walls = function() {
        // Memory.junk = objects;
         //console.log(objects);
     }
+    else {
+        // Create walls.
+        var wall_borders = {
+            left_x: 0,
+            top_y: 0,
+            right_x: 0,
+            bottom_y: 0,
+        }
+        // Find top_y
+        for (var y = 2; y < 47; y++) {
+            for (var x = 2; x < 47; x++) {
+                var obj = this.room.lookAt(x,y);
+                switch(obj[0].type) {
+                    case 'source':
+                    case 'structure':
+                    case 'mineral':
+                        wall_borders.top_y = y;
+                    break;
+                }
+                if (wall_borders.top_y != 0) {
+                    break;
+                }
+            }
+        }
+        // Find bottom_y
+        for (var y = 47; y > 2; y--) {
+            for (var x = 2; x < 47; x++) {
+                var obj = this.room.lookAt(x,y);
+                switch(obj[0].type) {
+                    case 'source':
+                    case 'structure':
+                    case 'mineral':
+                        wall_borders.bottom_y = y;
+                    break;
+                }
+                if (wall_borders.bottom_y != 0) {
+                    break;
+                }
+            }
+        }
+        // Find left_x
+        for (var x = 2; x < 47; x++) {
+            for (var y = 2; y < 47; y++) {
+                var obj = this.room.lookAt(x,y);
+                switch(obj[0].type) {
+                    case 'source':
+                    case 'structure':
+                    case 'mineral':
+                        wall_borders.left_x = x;
+                    break;
+                }
+                if (wall_borders.left_x != 0) {
+                    break;
+                }
+            }
+        }
+        // Find left_x
+        for (var x = 47; x > 2; x--) {
+            for (var y = 2; y < 47; y++) {
+                var obj = this.room.lookAt(x,y);
+                switch(obj[0].type) {
+                    case 'source':
+                    case 'structure':
+                    case 'mineral':
+                        wall_borders.right_x = x;
+                    break;
+                }
+                if (wall_borders.right_x != 0) {
+                    break;
+                }
+            }
+        }
+        var wall_project = [];
+        // Top wall.
+        wall_project.push(this.fn_wall_from_to_x(wall_borders.left_x,wall_borders.right_x, this.fn_calculate_posible_path(wall_borders.top_y - 4)));
+        // // Bottom wall.
+        // wall_project.push(this.fn_wall_from_to_x(wall_borders.left_x,wall_borders.right_x, wall_borders.bottom_y));
+       
+        // if (obj[0].type == 'constructionSite' && 
+                    //     obj[0].constructionSite.structureType == 'road' ||
+                    //     obj[0].type == 'structure' && obj[0].structureType == 'road') {
+                       
+                    // }\
+        //             console.log(wall_project);
+        // Memory.junk = wall_borders;
+    }
+}
+
+// Return array with coordinates of wall project.
+Spawn.prototype.fn_wall_from_to_x = function(start_x, end_x, y) {
+    var return_arr = [];
+    var step_off = 4;
+    start_x = this.fn_calculate_posible_path(start_x - step_off);
+    end_x = this.fn_calculate_posible_path(end_x + step_off);
+    var wall_path = {};
+    for (var x = start_x; x < end_x + 1; x++) {
+        var roomPosition = this.room.lookAt(x, y);
+        // type = terrain
+        if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
+            var roomPosition = this.room.getPositionAt(x, y)
+            return_arr.push(roomPosition)
+        }
+    }
+    return return_arr;
 }
 
 Spawn.prototype.fn_check_csites = function(path) {
@@ -197,13 +304,13 @@ Spawn.prototype.fn_build_extentions = function() {
 }
 
 Spawn.prototype.fn_calculate_posible_path = function(coordinates) {
-    var min = 0;
-    var max = 49;
-    if (coordinates > 49) {
-        coordinates = 49;
+    var min = 3;
+    var max = 46;
+    if (coordinates > max) {
+        coordinates = max;
     }
-    if (coordinates < 0) {
-        coordinates = 0;
+    if (coordinates < min) {
+        coordinates = min;
     }
     
     return coordinates;

@@ -22,7 +22,7 @@ module.exports.loop = function () {
         // spawn_obj.fn_build_extentions();
         // spawn_obj.fn_build_towers();
         // spawn_obj.fn_controll_towers();
-        spawn_obj.fn_build_walls();
+        spawn_obj.fn_build_walls_and_roads();
     }
     // Routines.fn_controll_units();
     // Routines.fn_check_creep_population();
