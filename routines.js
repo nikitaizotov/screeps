@@ -12,35 +12,35 @@ var routines = {
         sources: {},
         units: {
             harvester: {
-                needed: 20,
+                needed: 8,
                 build_on: 1,
             },
             upgrader: {
-                needed: 1,
+                needed: 2,
                 build_on: 1,
             },
             builder: {
-                needed: 1,
+                needed: 3,
                 build_on: 1,
             },
-            scout: {
-                needed: 1,
-                build_on: 1,
-            },
-            guard: {
-                needed: 0,
-                build_on: 3,
-            }
+            //scout: {
+            //    needed: 1,
+            //    build_on: 1,
+            //},
+            //guard: {
+            //    needed: 0,
+            //    build_on: 3,
+            //}
         },
         units_combat: {
-            combat_scout: {
-                needed: 1,
-                build_on: 3,
-            },
-            warrior: {
-                needed: 15,
-                build_on: 3,
-            },
+            //combat_scout: {
+            //    needed: 1,
+            //    build_on: 3,
+            //},
+            //warrior: {
+            //    needed: 15,
+            //    build_on: 3,
+            //},
         },
         constructions: {},
         settings: {

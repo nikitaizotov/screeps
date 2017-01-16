@@ -57,6 +57,9 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
             this.room.memory.walls = true;
             console.log("Roads project : done")
         }
+        else {
+            console.log('There is smth wrong with the room.');
+        }
         // var csites = this.room.find(FIND_CONSTRUCTION_SITES);
         //     for (var csite_i in csites) {
         //         if (csites[csite_i].structureType == 'road') {
@@ -67,113 +70,171 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
         //console.log(objects);
     }
     else {
-        // Create walls.
-        var wall_borders = {
-            left_x: 0,
-            top_y: 0,
-            right_x: 0,
-            bottom_y: 0,
-        }
-        // Find top_y
-        for (var y = 2; y < 47; y++) {
-            for (var x = 2; x < 47; x++) {
-                var obj = this.room.lookAt(x,y);
-                switch(obj[0].type) {
-                    case 'source':
-                    case 'structure':
-                    case 'mineral':
-                        wall_borders.top_y = y;
-                    break;
-                }
-                if (wall_borders.top_y != 0) {
-                    break;
-                }
+        if (!this.room.memory.wall_project) {
+            // Create walls.
+            var wall_borders = {
+                left_x: 0,
+                top_y: 0,
+                right_x: 0,
+                bottom_y: 0,
             }
-        }
-        // Find bottom_y
-        for (var y = 47; y > 2; y--) {
-            for (var x = 2; x < 47; x++) {
-                var obj = this.room.lookAt(x,y);
-                switch(obj[0].type) {
-                    case 'source':
-                    case 'structure':
-                    case 'mineral':
-                        wall_borders.bottom_y = y;
-                    break;
-                }
-                if (wall_borders.bottom_y != 0) {
-                    break;
-                }
-            }
-        }
-        // Find left_x
-        for (var x = 2; x < 47; x++) {
+            // Find top_y
             for (var y = 2; y < 47; y++) {
-                var obj = this.room.lookAt(x,y);
-                switch(obj[0].type) {
-                    case 'source':
-                    case 'structure':
-                    case 'mineral':
-                        wall_borders.left_x = x;
+                for (var x = 2; x < 47; x++) {
+                    var obj = this.room.lookAt(x, y);
+                    switch (obj[0].type) {
+                        case 'source':
+                        case 'structure':
+                        case 'mineral':
+                            wall_borders.top_y = y;
+                            break;
+                    }
+                    if (wall_borders.top_y != 0) {
+                        break;
+                    }
+                }
+            }
+            // Find bottom_y
+            for (var y = 47; y > 2; y--) {
+                for (var x = 2; x < 47; x++) {
+                    var obj = this.room.lookAt(x, y);
+                    switch (obj[0].type) {
+                        case 'source':
+                        case 'structure':
+                        case 'mineral':
+                            wall_borders.bottom_y = y;
+                            break;
+                    }
+                    if (wall_borders.bottom_y != 0) {
+                        break;
+                    }
+                }
+            }
+            // Find left_x
+            for (var x = 2; x < 47; x++) {
+                for (var y = 2; y < 47; y++) {
+                    var obj = this.room.lookAt(x, y);
+                    switch (obj[0].type) {
+                        case 'source':
+                        case 'structure':
+                        case 'mineral':
+                            wall_borders.left_x = x;
+                            break;
+                    }
+                    if (wall_borders.left_x != 0) {
+                        break;
+                    }
+                }
+            }
+            // Find left_x
+            for (var x = 47; x > 2; x--) {
+                for (var y = 2; y < 47; y++) {
+                    var obj = this.room.lookAt(x, y);
+                    switch (obj[0].type) {
+                        case 'source':
+                        case 'structure':
+                        case 'mineral':
+                            wall_borders.right_x = x;
+                            break;
+                    }
+                    if (wall_borders.right_x != 0) {
+                        break;
+                    }
+                }
+            }
+            var wall_project = [];
+            // Top wall.
+            wall_project.push(this.fn_wall_from_to_x(this.fn_calculate_posible_path(wall_borders.left_x - 4), this.fn_calculate_posible_path(wall_borders.right_x + 4), this.fn_calculate_posible_path(wall_borders.top_y - 4)));
+            // // Bottom wall.
+            wall_project.push(this.fn_wall_from_to_x(this.fn_calculate_posible_path(wall_borders.left_x - 4), this.fn_calculate_posible_path(wall_borders.right_x + 4), this.fn_calculate_posible_path(wall_borders.bottom_y + 4)));
+            // Left wall.
+            wall_project.push(this.fn_wall_from_to_y(this.fn_calculate_posible_path(wall_borders.top_y - 4), this.fn_calculate_posible_path(wall_borders.bottom_y + 4), this.fn_calculate_posible_path(wall_borders.left_x - 4)));
+            // // Right wall.
+            wall_project.push(this.fn_wall_from_to_y(this.fn_calculate_posible_path(wall_borders.top_y - 4), this.fn_calculate_posible_path(wall_borders.bottom_y + 4), this.fn_calculate_posible_path(wall_borders.right_x + 4)));
+            console.log("Walls project : done");
+            // Generate path from spawn to any exit. Run over the path from the beginning and found where path is contacting
+            // with walls. Remove wall project on that location.
+            // Generate path.
+            var current_room_connecions = Game.map.describeExits(this.room.name);
+            //var exit = this.pos.findClosestByRange(current_room_connecions);
+
+
+            // Get all keys
+            var keys = [];
+            for (var prop in current_room_connecions) {
+                keys.push(prop);
+            }
+
+            var exit = keys[Math.floor((Math.random() * keys.length))];
+            var route = Game.map.findRoute(this.room.name, current_room_connecions[exit]);
+            var exit_loc = this.pos.findClosestByRange(route[0].exit);
+            var path = this.room.findPath(this.pos, exit_loc, {ignoreRoads: true, ignoreCreeps: true});
+
+            // Update borders so they will be correct.
+            var wall_borders = {
+                left_x: this.fn_calculate_posible_path(wall_borders.left_x - 4),
+                top_y: this.fn_calculate_posible_path(wall_borders.top_y - 4),
+                right_x: this.fn_calculate_posible_path(wall_borders.right_x + 4),
+                bottom_y: this.fn_calculate_posible_path(wall_borders.bottom_y + 4),
+            }
+
+            Memory.junk4 = path;
+            // Run over the path.
+            for (var i in path) {
+                var connected_x = path[i].x;
+                var connected_y = path[i].y;
+                if (connected_x == wall_borders.left_x) {
+                    wall_project[2] = this.fn_clean_wall_elm(wall_project[2], connected_x, connected_y);
                     break;
                 }
-                if (wall_borders.left_x != 0) {
+                if (connected_x == wall_borders.right_x) {
+                    wall_project[3] = this.fn_clean_wall_elm(wall_project[3], connected_x, connected_y);
+                    break;
+                }
+                if (connected_y == wall_borders.top_y) {
+                    wall_project[0] = this.fn_clean_wall_elm(wall_project[0], connected_x, connected_y);
+                    break;
+                }
+                if (connected_y == wall_borders.bottom_y) {
+                    wall_project[1] = this.fn_clean_wall_elm(wall_project[1], connected_x, connected_y);
                     break;
                 }
             }
+            this.room.memory.wall_project = wall_project;
+            console.log('Wall project done.');
         }
-        // Find left_x
-        for (var x = 47; x > 2; x--) {
-            for (var y = 2; y < 47; y++) {
-                var obj = this.room.lookAt(x,y);
-                switch(obj[0].type) {
-                    case 'source':
-                    case 'structure':
-                    case 'mineral':
-                        wall_borders.right_x = x;
-                    break;
-                }
-                if (wall_borders.right_x != 0) {
-                    break;
+        else {
+            if (this.room.controller.level >= 3) {
+                for (var i in this.room.memory.wall_project) {
+                    var wall_p = this.room.memory.wall_project[i];
+                    for (var n in wall_p) {
+                        var built_roomPosition = this.room.getPositionAt(wall_p[n].x, wall_p[n].y);
+                        this.room.createConstructionSite(built_roomPosition, STRUCTURE_WALL);
+                    }
                 }
             }
         }
-        var wall_project = [];
-        // Top wall.
-        wall_project.push(this.fn_wall_from_to_x(wall_borders.left_x, wall_borders.right_x, this.fn_calculate_posible_path(wall_borders.top_y - 4)));
-        // // Bottom wall.
-        wall_project.push(this.fn_wall_from_to_x(wall_borders.left_x, wall_borders.right_x, this.fn_calculate_posible_path(wall_borders.bottom_y + 4)));
-        // Top wall.
-        wall_project.push(this.fn_wall_from_to_x(wall_borders.top_y, wall_borders.bottom_y, this.fn_calculate_posible_path(wall_borders.left_x - 4)));
-        // // Bottom wall.
-        wall_project.push(this.fn_wall_from_to_x(wall_borders.top_y, wall_borders.bottom_y, this.fn_calculate_posible_path(wall_borders.right_x + 4)));
-        console.log("Walls project : done");
-        // Generate path from spawn to any exit. Run over the path from the beginning and found where path is contacting
-        // with walls. Remove wall project on that location.
-        // Generate path.
-        var current_room_connecions = Game.map.describeExits(this.room);
-        var exit = this.pos.findClosestByRange(current_room_connecions);
-        console.log(current_room_connecions);
-        //var path = this.room.findPath(this.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
-        // if (obj[0].type == 'constructionSite' && 
-                    //     obj[0].constructionSite.structureType == 'road' ||
-                    //     obj[0].type == 'structure' && obj[0].structureType == 'road') {
-                       
-                    // }\
-        //             console.log(wall_project);
-        // Memory.junk = wall_borders;
     }
+}
+
+/**
+ *
+ */
+Spawn.prototype.fn_clean_wall_elm = function(project, x, y) {
+    for (var i in project) {
+        if (project[i].x == x && project[i].y == y) {
+            project.splice(i,1);
+            break;
+        }
+    }
+    return project;
 }
 
 // Return array with coordinates of wall project for top and down..
 Spawn.prototype.fn_wall_from_to_x = function(start_x, end_x, y) {
+    //console.log("PRJ " + start_x + ' ' + end_x + ' ' + y)
     // Array that will be returned.
     var return_arr = [];
-    var step_off = 4;
-    // Calculate borders.
-    start_x = this.fn_calculate_posible_path(start_x - step_off);
-    end_x = this.fn_calculate_posible_path(end_x + step_off);
-    var wall_path = {};
     for (var x = start_x; x < end_x + 1; x++) {
         var roomPosition = this.room.lookAt(x, y);
         if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
@@ -184,16 +245,12 @@ Spawn.prototype.fn_wall_from_to_x = function(start_x, end_x, y) {
     return return_arr;
 }
 
-// Return array with coordinates of wall project for left and right walls.
+// Return array with coordinates of wall project for top and down..
 Spawn.prototype.fn_wall_from_to_y = function(start_y, end_y, x) {
+    //console.log("PRJ " + start_x + ' ' + end_x + ' ' + y)
     // Array that will be returned.
     var return_arr = [];
-    var step_off = 4;
-    // Calculate borders.
-    start_x = this.fn_calculate_posible_path(start_y - step_off);
-    end_x = this.fn_calculate_posible_path(end_y + step_off);
-    var wall_path = {};
-    for (var x = start_y; x < end_y + 1; x++) {
+    for (var y = start_y; y < end_y + 1; y++) {
         var roomPosition = this.room.lookAt(x, y);
         if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
             var roomPosition = this.room.getPositionAt(x, y)
@@ -207,7 +264,11 @@ Spawn.prototype.fn_check_csites = function(path) {
     var errors = false;
     for (var i in path) {
         var what = this.room.lookAt(path[i].x, path[i].y);
+        if (what[0].type == 'creep' || what[0].type == 'mineral') {
+            continue;
+        }
         if (what[0].type != 'constructionSite' && what[0].type != 'source' && what[0].type != 'structure') {
+            console.log(what[0].type)
             return true;
         }
     }
