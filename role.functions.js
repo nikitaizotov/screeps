@@ -1,5 +1,34 @@
 
 var functions = {
+	fn_save_room_sources: function(room) {
+		if (!Memory.logistics) {
+			Memory.logistics = {};
+			Memory.logistics.rooms = {};
+			Memory.logistics.sources = {};
+			Memory.logistics.rooms[room.name] = {};
+			Memory.logistics.rooms[room.name].sources = {};
+		}
+		// Update room data.
+		if (!Memory.logistics.rooms[room.name]) {
+			Memory.logistics.rooms[room.name] = {};
+		}
+		var sources = room.find(FIND_SOURCES);
+		for (var i in sources) {
+			var source = sources[i];
+			var sid = source.id;
+			if (!Memory.logistics.sources) {
+				Memory.logistics.sources = {};
+			}
+			if (!Memory.logistics.sources[sid]) {
+				Memory.logistics.sources[sid] = [];
+				Memory.logistics.rooms[room.name].sources[sid] = {
+					x: source.pos.x,
+					y: source.pos.y,
+				};
+			}
+		}
+	},
+
 	// Save data about the room in to creeps home room military memory.
 	fn_save_rooms_data: function(creep) {
 		var room = Game.rooms[creep.memory.room];

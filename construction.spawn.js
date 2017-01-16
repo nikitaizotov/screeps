@@ -1,5 +1,7 @@
+var creepFunctions = require('role.functions');
+
 Spawn.prototype.fn_build_walls_and_roads = function() {
-    if (Game.time % 1) {
+    if (Game.time % 1000) {
         return;
     }
     // Collect all objects in to array.
@@ -421,42 +423,28 @@ Spawn.prototype.fn_calculate_posible_path = function(coordinates) {
 }
 
 Spawn.prototype.fn_discover_room = function() {
-    var sources = this.room.find(FIND_SOURCES);
-    for (var i in sources) {
-        var source = sources[i];
-        var sid = source.id;
-        if (!this.room.memory.sources) {
-            this.room.memory.sources = {};
-        }
-        if (!this.room.memory.sources[sid]) {
-            this.room.memory.sources[sid] = [];
-            // // Connect source with road to spawn and to room controller.
-            var path = this.room.findPath(source.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
-            this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-            var path = this.room.findPath(source.pos, this.pos, {ignoreRoads: true, ignoreCreeps:true});
-            this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-        }
-    }
-    // Order to build walls
-    if (this.room.controller.level > 0) {
-        if (!this.room.memory.walls) {
-            var upper_wall = [];
-            var errors = 0;
-            for (var x = 2; x < 48; x++) {
-                var built_roomPosition = this.room.getPositionAt(x, 2);
-                errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
-                var built_roomPosition = this.room.getPositionAt(2, x);
-                errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
-                var built_roomPosition = this.room.getPositionAt(x, 47);
-                errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
-                var built_roomPosition = this.room.getPositionAt(47, x);
-                errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
-            }
-            if (errors == 0) {
-                this.room.memory.walls = true;
-            }
-        }
-    }
+    creepFunctions.fn_save_room_sources(this.room);
+    //
+    //// Order to build walls
+    //if (this.room.controller.level > 0) {
+    //    if (!this.room.memory.walls) {
+    //        var upper_wall = [];
+    //        var errors = 0;
+    //        for (var x = 2; x < 48; x++) {
+    //            var built_roomPosition = this.room.getPositionAt(x, 2);
+    //            errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+    //            var built_roomPosition = this.room.getPositionAt(2, x);
+    //            errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+    //            var built_roomPosition = this.room.getPositionAt(x, 47);
+    //            errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+    //            var built_roomPosition = this.room.getPositionAt(47, x);
+    //            errors += this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+    //        }
+    //        if (errors == 0) {
+    //            this.room.memory.walls = true;
+    //        }
+    //    }
+    //}
 }
 
 // This function will build roads and connects all structures in the room.
