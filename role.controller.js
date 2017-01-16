@@ -39,19 +39,8 @@ var roleController = {
     // Will not getObjectById
     fn_creem_from_source: function(creep){
         var sid = creep.memory.tid;
-        var base_room = Game.rooms[creep.memory.home_room];
-        if (creep.memory.home_room != creep.memory.tid_room) {
-            if (base_room.memory.connected[creep.memory.tid_room].sources[sid]) {
-                var index = base_room.memory.connected[creep.memory.tid_room].sources[sid].indexOf(creep.name);
-                base_room.memory.connected[creep.memory.tid_room].sources[sid].splice(index, 1);
-            }
-        }
-        else {
-            if (base_room.memory.sources[sid]) {
-                var index = base_room.memory.sources[sid].indexOf(creep.name);
-                base_room.memory.sources[sid].splice(index, 1);
-            }
-        }
+        var index = Memory.logistics.sources[sid].indexOf(creep.name);
+        Memory.logistics.sources[sid].splice(index, 1);
         creep.memory.tid = '';
         return creep;
     },
