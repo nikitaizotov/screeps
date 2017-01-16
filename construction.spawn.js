@@ -55,6 +55,7 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
         }
         if (errors == false) {
             this.room.memory.walls = true;
+            console.log("Roads project : done")
         }
         // var csites = this.room.find(FIND_CONSTRUCTION_SITES);
         //     for (var csite_i in csites) {
@@ -139,10 +140,21 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
         }
         var wall_project = [];
         // Top wall.
-        wall_project.push(this.fn_wall_from_to_x(wall_borders.left_x,wall_borders.right_x, this.fn_calculate_posible_path(wall_borders.top_y - 4)));
+        wall_project.push(this.fn_wall_from_to_x(wall_borders.left_x, wall_borders.right_x, this.fn_calculate_posible_path(wall_borders.top_y - 4)));
         // // Bottom wall.
-        // wall_project.push(this.fn_wall_from_to_x(wall_borders.left_x,wall_borders.right_x, wall_borders.bottom_y));
-       
+        wall_project.push(this.fn_wall_from_to_x(wall_borders.left_x, wall_borders.right_x, this.fn_calculate_posible_path(wall_borders.bottom_y + 4)));
+        // Top wall.
+        wall_project.push(this.fn_wall_from_to_x(wall_borders.top_y, wall_borders.bottom_y, this.fn_calculate_posible_path(wall_borders.left_x - 4)));
+        // // Bottom wall.
+        wall_project.push(this.fn_wall_from_to_x(wall_borders.top_y, wall_borders.bottom_y, this.fn_calculate_posible_path(wall_borders.right_x + 4)));
+        console.log("Walls project : done");
+        // Generate path from spawn to any exit. Run over the path from the beginning and found where path is contacting
+        // with walls. Remove wall project on that location.
+        // Generate path.
+        var current_room_connecions = Game.map.describeExits(this.room);
+        var exit = this.pos.findClosestByRange(current_room_connecions);
+        console.log(current_room_connecions);
+        //var path = this.room.findPath(this.pos, this.room.controller.pos, {ignoreRoads: true, ignoreCreeps:true});
         // if (obj[0].type == 'constructionSite' && 
                     //     obj[0].constructionSite.structureType == 'road' ||
                     //     obj[0].type == 'structure' && obj[0].structureType == 'road') {
@@ -153,16 +165,36 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
     }
 }
 
-// Return array with coordinates of wall project.
+// Return array with coordinates of wall project for top and down..
 Spawn.prototype.fn_wall_from_to_x = function(start_x, end_x, y) {
+    // Array that will be returned.
     var return_arr = [];
     var step_off = 4;
+    // Calculate borders.
     start_x = this.fn_calculate_posible_path(start_x - step_off);
     end_x = this.fn_calculate_posible_path(end_x + step_off);
     var wall_path = {};
     for (var x = start_x; x < end_x + 1; x++) {
         var roomPosition = this.room.lookAt(x, y);
-        // type = terrain
+        if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
+            var roomPosition = this.room.getPositionAt(x, y)
+            return_arr.push(roomPosition)
+        }
+    }
+    return return_arr;
+}
+
+// Return array with coordinates of wall project for left and right walls.
+Spawn.prototype.fn_wall_from_to_y = function(start_y, end_y, x) {
+    // Array that will be returned.
+    var return_arr = [];
+    var step_off = 4;
+    // Calculate borders.
+    start_x = this.fn_calculate_posible_path(start_y - step_off);
+    end_x = this.fn_calculate_posible_path(end_y + step_off);
+    var wall_path = {};
+    for (var x = start_y; x < end_y + 1; x++) {
+        var roomPosition = this.room.lookAt(x, y);
         if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
             var roomPosition = this.room.getPositionAt(x, y)
             return_arr.push(roomPosition)

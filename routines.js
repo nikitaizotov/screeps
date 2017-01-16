@@ -101,7 +101,7 @@ var routines = {
         for(var name in Game.creeps) {
             var creep = Game.creeps[name];
             if (Memory.creeps[name] == false) {
-                console.log("Not legal creep, removing.");
+                //console.log("Not legal creep, removing.");
                 creep.suicide();
             }
             
@@ -291,7 +291,7 @@ var routines = {
     spawn_creep: function(spawn, body, name, options) {
         if(Game.spawns.Spawn1.canCreateCreep(body, name) == OK) {
             var newName = Game.spawns[spawn].createCreep(body, name, options);
-            console.log('Spawning new ' + options.role + ': ' + newName);
+            //console.log('Spawning new ' + options.role + ': ' + newName);
         }
     },
 
