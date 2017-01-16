@@ -64,7 +64,7 @@ var roleController = {
         // If creep is having something inside of tid - he have his source.
         if (creep.memory.tid == '') {
             for (var sid in Memory.logistics.rooms[creep.room.name].sources) {
-                if (Memory.logistics.sources[sid].length < 1) {
+                if (Memory.logistics.sources[sid].length < 3) {
                     Memory.logistics.sources[sid].push(creep.name);
                     creep.memory.tid = sid;
                     creep.memory.tid_room = creep.room.name;
