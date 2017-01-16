@@ -37,10 +37,12 @@ var roleController = {
         }  
     },
     // Will not getObjectById
-    fn_creem_from_source: function(creep){
+    fn_creem_from_source: function(creep) {
         var sid = creep.memory.tid;
-        var index = Memory.logistics.sources[sid].indexOf(creep.name);
-        Memory.logistics.sources[sid].splice(index, 1);
+        if (Memory.logistics.sources[sid]) {
+            var index = Memory.logistics.sources[sid].indexOf(creep.name);
+            Memory.logistics.sources[sid].splice(index, 1);
+        }
         creep.memory.tid = '';
         return creep;
     },
