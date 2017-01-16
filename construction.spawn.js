@@ -204,7 +204,7 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
             console.log('Wall project done.');
         }
         else {
-            if (this.room.controller.level >= 3) {
+            if (this.room.controller.level >= 2) {
                 for (var i in this.room.memory.wall_project) {
                     var wall_p = this.room.memory.wall_project[i];
                     for (var n in wall_p) {
@@ -215,18 +215,29 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
             }
         }
     }
+         //var csites = this.room.find(FIND_CONSTRUCTION_SITES);
+         //for (var csite_i in csites) {
+         //    if (csites[csite_i].structureType == 'constructedWall') {
+         //        csites[csite_i].remove();
+         //    }
+         //}
 }
 
 /**
  *
  */
 Spawn.prototype.fn_clean_wall_elm = function(project, x, y) {
+    //console.log("#######")
+    //console.log(project.length)
     for (var i in project) {
         if (project[i].x == x && project[i].y == y) {
+            console.log('removed ' + x + ' ' + y)
             project.splice(i,1);
             break;
         }
     }
+    //console.log(project.length)
+    //console.log("#######")
     return project;
 }
 
