@@ -6,6 +6,7 @@ var roleCombatScout = require('role.combat_scout');
 var roleBuilder = require('role.builder');
 var roleGuard = require('role.guard');
 var roleWarrior = require('role.warrior');
+var roleTech = require('role.tech');
 
 var routines = {
     settings: {
@@ -22,6 +23,10 @@ var routines = {
             builder: {
                 needed: 2,
                 build_on: 1,
+            },
+            tech: {
+                needed:  1,
+                build_on: 2,
             },
             //scout: {
             //    needed: 1,
@@ -128,6 +133,9 @@ var routines = {
             if(creep.memory.role == 'warrior') {
                 roleWarrior.run(creep);
             }
+            if(creep.memory.role == 'tech') {
+                roleTech.run(creep);
+            }
         }
     },
     fn_check_creep_population: function() {
@@ -175,7 +183,22 @@ var routines = {
             case "warrior":
                     this.spawn_warrior(spawn);
                 break;
+            case "tech":
+                    this.spawn_tech(spawn);
+                break;
         }
+    },
+    // Spawn upgrader.
+    spawn_tech: function(spawn) {
+        var body = this.fn_get_worker_body(spawn);
+        var creeps_memory = {
+            role: 'tech',
+            temp_role: 'tech',
+            tid: '',
+            tid_room: '',
+            home_room: '',
+        };
+        this.spawn_creep(spawn.name, body, undefined, creeps_memory);
     },
     // Spawn upgrader.
     spawn_upgrader: function(spawn) {
@@ -186,7 +209,7 @@ var routines = {
             tid: '',
             tid_room: '',
             home_room: '',
-        }
+        };
         this.spawn_creep(spawn.name, body, undefined, creeps_memory);
     },
     // Spawn builder.
@@ -198,7 +221,7 @@ var routines = {
             tid: '',
             tid_room: '',
             home_room: '',
-        }
+        };
         this.spawn_creep(spawn.name, body, undefined, creeps_memory);
     },
      // Spawn guard.
@@ -210,7 +233,7 @@ var routines = {
             tid: '',
             tid_room: '',
             home_room: spawn.room.name,
-        }
+        };
         this.spawn_creep(spawn.name, body, undefined, creeps_memory);
     },
 
@@ -223,7 +246,7 @@ var routines = {
             tid: '',
             tid_room: '',
             home_room: '',
-        }
+        };
         this.spawn_creep(spawn.name, body, undefined, creeps_memory);
     },
 
