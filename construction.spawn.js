@@ -22,38 +22,57 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
         }
     
         var roads = [];
-        for (var i = 0; i < objects.length; i++) {
-            var p1 = this.room.getPositionAt(objects[i][0], objects[i][1]);
-            if (i == 0) {
-                // Top.
-                roads.push([p1, p1]);
-            }
-            else {
-                var left = roads[roads.length-1][0];
-                var right = roads[roads.length-1][1];
-                if (p1.x <= left.x) {
-                    // Left
-                    roads.push([p1, right]);
-                    var path = this.room.findPath(p1, left, {ignoreRoads: true, ignoreCreeps:true});
-                    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+        // Road plan will hold roads construction plan, needed to not to build extra roads when something was wrong
+        // on a previeus time.
+        if (!this.room.memory.roads_plan) {
+            this.room.memory.roads_plan = [];
+            for (var i = 0; i < objects.length; i++) {
+                var p1 = this.room.getPositionAt(objects[i][0], objects[i][1]);
+                if (i == 0) {
+                    // Top.
+                    roads.push([p1, p1]);
                 }
                 else {
-                    // Right
-                    roads.push([left, p1]);
-                    var path = this.room.findPath(p1, right, {ignoreRoads: true, ignoreCreeps:true});
-                    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-                } 
-                if (errors == false) {
-                    errors = this.fn_check_csites(path);
+                    var left = roads[roads.length-1][0];
+                    var right = roads[roads.length-1][1];
+                    if (p1.x <= left.x) {
+                        // Left
+                        roads.push([p1, right]);
+                        var path = this.room.findPath(p1, left, {ignoreRoads: true, ignoreCreeps:true});
+                        this.room.memory.roads_plan.push(path);
+                        this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+                    }
+                    else {
+                        // Right
+                        roads.push([left, p1]);
+                        var path = this.room.findPath(p1, right, {ignoreRoads: true, ignoreCreeps:true});
+                        this.room.memory.roads_plan.push(path);
+                        this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+                    } 
+                    if (errors == false) {
+                        errors = this.fn_check_csites(path);
+                    }
                 }
             }
+            // Connect bottom.
+            var path = this.room.findPath(roads[roads.length-1][0], roads[roads.length-1][1], {ignoreRoads: true, ignoreCreeps:true});
+            this.room.memory.roads_plan.push(path);
+            this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+            if (errors == false) {
+                errors = this.fn_check_csites(path);
+            }
         }
-        // Connect bottom.
-        var path = this.room.findPath(roads[roads.length-1][0], roads[roads.length-1][1], {ignoreRoads: true, ignoreCreeps:true});
-        Memory.junk = path;
-        this.fn_create_construction_sites(path, STRUCTURE_ROAD);
-        if (errors == false) {
-            errors = this.fn_check_csites(path);
+        else {
+            // Get plan and build roads!
+            for (var plan_i in this.room.memory.roads_plan) {
+                if (errors == false) {
+                    var path = this.room.memory.roads_plan[plan_i];
+                    this.fn_create_construction_sites(path, STRUCTURE_ROAD);
+                    if (errors == false) {
+                        errors = this.fn_check_csites(path);
+                    }
+                }
+            }
         }
         if (errors == false) {
             this.room.memory.walls = true;
@@ -206,7 +225,7 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
             console.log('Wall project done.');
         }
         else {
-            if (this.room.controller.level >= 2) {
+            if (this.room.controller.level >= 4) {
                 for (var i in this.room.memory.wall_project) {
                     var wall_p = this.room.memory.wall_project[i];
                     for (var n in wall_p) {
