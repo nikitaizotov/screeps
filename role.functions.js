@@ -3,15 +3,21 @@ var functions = {
 	fn_save_room_sources: function(room) {
 		if (!Memory.logistics) {
 			Memory.logistics = {};
-			Memory.logistics.rooms = {};
-			Memory.logistics.sources = {};
-			Memory.logistics.rooms[room.name] = {};
-			Memory.logistics.rooms[room.name].sources = {};
 		}
+
+		if (!Memory.logistics.rooms) {
+			Memory.logistics.rooms = {};
+		}
+
 		// Update room data.
 		if (!Memory.logistics.rooms[room.name]) {
 			Memory.logistics.rooms[room.name] = {};
 		}
+
+		if (!Memory.logistics.rooms[room.name].sources) {
+			Memory.logistics.rooms[room.name].sources = {};
+		}
+
 		var sources = room.find(FIND_SOURCES);
 		for (var i in sources) {
 			var source = sources[i];
