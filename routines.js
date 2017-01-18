@@ -202,7 +202,7 @@ var routines = {
     },
     // Spawn upgrader.
     spawn_upgrader: function(spawn) {
-        var body = this.fn_get_worker_body(spawn);
+        var body = this.fn_get_worker_body_dynamic(spawn);
         var creeps_memory = {
             role: 'upgrader', 
             temp_role: 'upgrader', 
@@ -214,7 +214,7 @@ var routines = {
     },
     // Spawn builder.
     spawn_builder: function(spawn) {
-        var body = this.fn_get_worker_body(spawn);
+        var body = this.fn_get_worker_body_dynamic(spawn);
         var creeps_memory = {
             role: 'builder', 
             temp_role: 'builder', 
@@ -239,7 +239,7 @@ var routines = {
 
     // Spawn havester.
     spawn_harvester: function(spawn) {
-        var body = this.fn_get_worker_body(spawn);
+        var body = this.fn_get_worker_body_dynamic(spawn);
             var creeps_memory = {
             role: 'harvester', 
             temp_role: 'harvester', 
@@ -343,6 +343,23 @@ var routines = {
                         body = [WORK,CARRY,MOVE];
                     }
                 }
+        }
+       return body;
+    },
+    fn_get_worker_body_dynamic: function(spawn) {
+        var body = [];
+        if (spawn.room.energyAvailable % 200) {
+            //var energy_total = spawn.room.energyAvailable;
+            var part_loops = spawn.room.energyAvailable / 200;
+            for (var i = 0; i < part_loops; i++) {
+                body.push(WORK);
+            }
+            for (var i = 0; i < part_loops; i++) {
+                body.push(CARRY);
+            }
+            for (var i = 0; i < part_loops; i++) {
+                body.push(MOVE);
+            }
         }
        return body;
     },
