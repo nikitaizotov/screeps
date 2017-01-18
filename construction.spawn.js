@@ -392,6 +392,9 @@ Spawn.prototype.fn_build_towers = function() {
 }
 
 Spawn.prototype.fn_build_extentions = function() {
+    if (Game.time%10) {
+        return;
+    }
     // Get extention plan at first.
     if (!this.room.memory.extention_plan) {
         var plan = {};
