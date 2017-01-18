@@ -495,6 +495,7 @@ Spawn.prototype.fn_build_extentions = function() {
                 for (var x = plan.x + 1; x < total_len + plan.x; x+=1) {
                     if (x > 47) {
                         Game.notify('Room ' + this.room.name + " cant build extentions.");
+                        this.fn_build_extentions_near_road();
                         break;
                     }
                     var start_y = plan.y - total_len;
@@ -522,6 +523,7 @@ Spawn.prototype.fn_build_extentions = function() {
                     console.log(111);
                     if (x < 3) {
                         Game.notify('Room ' + this.room.name + " cant build extentions.");
+                        this.fn_build_extentions_near_road();
                         break;
                     }
                     var start_y = plan.y - total_len;
@@ -557,6 +559,46 @@ Spawn.prototype.fn_build_extentions = function() {
                     this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
                 }
             //this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+        }
+    }
+}
+
+Spawn.prototype.fn_build_extentions_near_road = function() {
+    var exts = this.room.find(STRUCTURE_EXTENSION);
+    if (!exts) {
+        var exts_built = 0;
+    }
+    else {
+        exts_built = exts.length;
+    }
+    var csites = this.room.find(FIND_CONSTRUCTION_SITES);
+    this.room.memory.extensions = exts.length;
+    for (var csite_i in csites) {
+        if (csites[csite_i].structureType == 'extension') {
+            this.room.memory.extensions += 1;
+        }
+    }
+
+    var extensions_avail = 0;
+    switch(this.room.controller.level) {
+        case 1:
+            extensions_avail = 0;
+        break;
+        case 2:
+            extensions_avail = 5;
+        break;
+        case 3:
+            extensions_avail = 10; 
+        break;
+        default:
+            extensions_avail = this.room.controller.level * 10 - 20;
+        break;
+    }
+    // REFACTOR NEEDED!!!
+    if (exts_built < extensions_avail) {
+        var roomPosition = this.fn_get_construction_loc();
+        if (roomPosition != false) {
+            this.room.createConstructionSite(roomPosition, STRUCTURE_EXTENSION);
         }
     }
 }
