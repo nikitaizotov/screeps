@@ -29,18 +29,20 @@ var roleHarvester = {
                         return;
                     }
                     var flag_tower_found = false;
-        	        
+        	        var skip_tower = Math.random() >= 0.5;
+        	        if (skip_tower == true) {
             	    // Search for a targets that will be a tower.
-            	    for (var i in targets) {
-            	        // If this is tower change flag to false and move creep to it.
-            	        if (targets[i].structureType == 'tower') {
-                            if(creep.transfer(targets[i], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                                creep.moveTo(targets[i]);
-                                flag_tower_found = true;
-            	                break;
-                            }
-            	        } 
-            	    }
+                	    for (var i in targets) {
+                	        // If this is tower change flag to false and move creep to it.
+                	        if (targets[i].structureType == 'tower') {
+                                if(creep.transfer(targets[i], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                                    creep.moveTo(targets[i]);
+                                    flag_tower_found = true;
+                	                break;
+                                }
+                	        } 
+                	    }
+        	        }
                     
                     // If tower was not found find closest extension or spawn.
                     if (flag_tower_found == false) {

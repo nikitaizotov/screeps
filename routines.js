@@ -351,17 +351,17 @@ var routines = {
         if (spawn.room.energyAvailable % 200) {
             //var energy_total = spawn.room.energyAvailable;
             var part_loops = spawn.room.energyAvailable / 200;
-            for (var i = 0; i < part_loops; i++) {
+            for (var i = 0; i < part_loops-1; i++) {
                 body.push(WORK);
             }
-            for (var i = 0; i < part_loops; i++) {
+            for (var i = 0; i < part_loops-1; i++) {
                 body.push(CARRY);
             }
-            for (var i = 0; i < part_loops; i++) {
+            for (var i = 0; i < part_loops-1; i++) {
                 body.push(MOVE);
             }
         }
-       return body;
+        return body;
     },
 }
 module.exports = routines;
