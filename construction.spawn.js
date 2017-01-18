@@ -91,6 +91,9 @@ Spawn.prototype.fn_build_walls_and_roads = function() {
         //console.log(objects);
     }
     else {
+        if (this.room.controller.level < 4) {
+            return;
+        }
         if (!this.room.memory.wall_project) {
             // Create walls.
             var wall_borders = {
@@ -389,41 +392,171 @@ Spawn.prototype.fn_build_towers = function() {
 }
 
 Spawn.prototype.fn_build_extentions = function() {
-    var exts = this.room.find(STRUCTURE_EXTENSION);
-    if (!exts) {
-        var exts_built = 0;
-    }
-    else {
-        exts_built = exts.length;
-    }
-    var csites = this.room.find(FIND_CONSTRUCTION_SITES);
-    this.room.memory.extensions = exts.length;
-    for (var csite_i in csites) {
-        if (csites[csite_i].structureType == 'extension') {
-            this.room.memory.extensions += 1;
+    // Get extention plan at first.
+    if (!this.room.memory.extention_plan) {
+        var plan = {};
+        // Search for all sources.
+        var sources = this.room.find(FIND_SOURCES);
+        // Find source that is closer to the center of the room.
+        var closest = this.pos.findClosestByRange(sources);
+        // Place from what we'll start the building process.
+        var empty_place = false;
+        for (var y=-1; y<3; y++){
+            for (var x=-1; x<3; x++){
+                var new_x = this.fn_calculate_posible_path(closest.pos.x - x);
+                var new_y = this.fn_calculate_posible_path(closest.pos.y - y);
+                var roomPosition = this.room.lookAt(new_x, new_y);
+                if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
+                    empty_place = {
+                        x: new_x,
+                        y: new_y,
+                    }
+                    break;
+                }
+            }
+            if (empty_place !== false) {
+                break;
+            }
         }
+        plan.x = empty_place.x;
+        plan.y = empty_place.y;
+        plan.directions = {};
+        // Find where we'll plan to build things.
+        // half of the room is 25, but we can build only on 48 locations.
+        // so half will be 24.
+        plan.directions.x = 'left';
+        if ((48 - plan.x) > 24) {
+            plan.directions.x = 'right';
+        }
+        
+        if (plan.y > closest.pos.y) {
+            plan.directions.y = 'down';
+        }
+        else {
+            plan.directions.y = 'up';
+        }
+        this.room.memory.extention_plan = plan;
     }
-
-    var extensions_avail = 0;
-    switch(this.room.controller.level) {
-        case 1:
-            extensions_avail = 0;
-        break;
-        case 2:
-            extensions_avail = 5;
-        break;
-        case 3:
-            extensions_avail = 10; 
-        break;
-        default:
-            extensions_avail = this.room.controller.level * 10 - 20;
-        break;
-    }
-    // REFACTOR NEEDED!!!
-    if (exts_built < extensions_avail) {
-        var roomPosition = this.fn_get_construction_loc();
-        if (roomPosition != false) {
-            this.room.createConstructionSite(roomPosition, STRUCTURE_EXTENSION);
+    if (this.room.memory.extention_plan) {
+        var built_roomPosition = false;
+        var place_found = false;
+        var total_zone = 16;
+        var current_step = 0;
+        var one_step = 2;
+        var build_on_x = 0;
+        var build_on_y = 0;
+        // Find place for building.
+        if (this.room.memory.extention_plan.directions.x == 'left') {
+            build_on_x = this.room.memory.extention_plan.x - 1;
+        }
+        else {
+            build_on_x = this.room.memory.extention_plan.x + 1;
+        }
+        build_on_y = this.room.memory.extention_plan.y - 8;
+    
+        var exts = this.room.find(STRUCTURE_EXTENSION);
+        if (!exts) {
+            var exts_built = 0;
+        }
+        else {
+            exts_built = exts.length;
+        }
+        var csites = this.room.find(FIND_CONSTRUCTION_SITES);
+        this.room.memory.extensions = exts.length;
+        for (var csite_i in csites) {
+            if (csites[csite_i].structureType == 'extension') {
+                this.room.memory.extensions += 1;
+            }
+        }
+    
+        var extensions_avail = 0;
+        switch(this.room.controller.level) {
+            case 1:
+                extensions_avail = 0;
+            break;
+            case 2:
+                extensions_avail = 5;
+            break;
+            case 3:
+                extensions_avail = 10; 
+            break;
+            default:
+                extensions_avail = this.room.controller.level * 10 - 20;
+            break;
+        }
+        // REFACTOR NEEDED!!!
+        if (exts_built < extensions_avail) {
+            var found = false;
+            var total_len = 10;
+            var step = 2;
+            var plan = this.room.memory.extention_plan;
+            var roomPosition = {};
+            if (plan.directions.x == 'right') {
+                for (var x = plan.x + 1; x < total_len + plan.x; x+=1) {
+                    if (x > 47) {
+                        Game.notify('Room ' + this.room.name + " cant build extentions.");
+                        break;
+                    }
+                    var start_y = plan.y - total_len;
+                    if (x%2) {
+                        start_y++;
+                    }
+                    for (var y = start_y; y < total_len + plan.y; y+=step) {
+                        var roomPosition = this.room.lookAt(x, y);
+                        if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
+                            var roomPosition = {
+                                x: x,
+                                y: y,
+                            }
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found == true) {
+                        break;
+                    }
+                }
+            }
+            else {
+                for (var x = plan.x - 1; x > plan.x - total_len; x-=1) {
+                    console.log(111);
+                    if (x < 3) {
+                        Game.notify('Room ' + this.room.name + " cant build extentions.");
+                        break;
+                    }
+                    var start_y = plan.y - total_len;
+                    if (x%2) {
+                        start_y++;
+                    }
+                    for (var y = start_y; y < total_len + plan.y; y+=step) {
+                        var roomPosition = this.room.lookAt(x, y);
+                        if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
+                            var roomPosition = {
+                                x: x,
+                                y: y,
+                            }
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found == true) {
+                        break;
+                    }
+                }
+            }
+            /*
+            	extention_plan		{3}
+                    x	:	18
+                    y	:	21
+                    	directions		{2}
+                    x	:	right
+                    y	:	down 
+            */
+                if (found == true) {
+                    var built_roomPosition = this.room.getPositionAt(roomPosition.x, roomPosition.y);
+                    this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
+                }
+            //this.room.createConstructionSite(built_roomPosition, STRUCTURE_EXTENSION);
         }
     }
 }
