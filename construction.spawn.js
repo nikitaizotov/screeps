@@ -494,6 +494,7 @@ Spawn.prototype.fn_build_extentions = function() {
             if (plan.directions.x == 'right') {
                 for (var x = plan.x + 1; x < total_len + plan.x; x+=1) {
                     if (x > 47) {
+                        console.log("Buuug")
                         Game.notify('Room ' + this.room.name + " cant build extentions.");
                         this.fn_build_extentions_near_road();
                         break;
@@ -503,6 +504,16 @@ Spawn.prototype.fn_build_extentions = function() {
                         start_y++;
                     }
                     for (var y = start_y; y < total_len + plan.y; y+=step) {
+                        if (y < 3) {
+                            Game.notify('Room ' + this.room.name + " cant build extentions.");
+                            this.fn_build_extentions_near_road();
+                            break;
+                        }
+                        if (y > 47) {
+                            Game.notify('Room ' + this.room.name + " cant build extentions.");
+                            this.fn_build_extentions_near_road();
+                            break;
+                        }
                         var roomPosition = this.room.lookAt(x, y);
                         if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
                             var roomPosition = {
@@ -531,6 +542,16 @@ Spawn.prototype.fn_build_extentions = function() {
                         start_y++;
                     }
                     for (var y = start_y; y < total_len + plan.y; y+=step) {
+                        if (y < 3) {
+                            Game.notify('Room ' + this.room.name + " cant build extentions.");
+                            this.fn_build_extentions_near_road();
+                            break;
+                        }
+                        if (y > 47) {
+                            Game.notify('Room ' + this.room.name + " cant build extentions.");
+                            this.fn_build_extentions_near_road();
+                            break;
+                        }
                         var roomPosition = this.room.lookAt(x, y);
                         if (roomPosition[0].type == 'terrain' && roomPosition[0].terrain != 'wall') {
                             var roomPosition = {
